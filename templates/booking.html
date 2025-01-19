@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запис на ремонт</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>СТО Рівне</h1>
+        </div>
+        <nav class="nav">
+            <a href="/">Головна</a>
+            <a href="/booking">Послуги</a>
+            <a href="#">СТО</a>
+            <a href="#">Про нас</a>
+            <a href="#">Акції</a>
+            <a href="#">Контакти</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Запис на ремонт</h2>
+        <form action="/booking" method="POST">
+            <label for="name">Ім'я:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="phone">Телефон:</label><br>
+            <input type="tel" id="phone" name="phone" required><br><br>
+
+            <label for="date">Дата ремонту:</label><br>
+            <input type="date" id="date" name="date" required><br><br>
+
+            <label for="comment">Коментар:</label><br>
+            <textarea id="comment" name="comment"></textarea><br><br>
+
+            <button type="submit">Записатися</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2025 СТО Рівне. Всі права захищені.</p>
+    </footer>
+</body>
+</html>
