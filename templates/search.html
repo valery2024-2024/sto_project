@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пошук заявок</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Результати пошуку</h1>
+    <ul>
+        {% for result in results %}
+        <li>{{ result.name }} — {{ result.phone }} ({{ result.date }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
