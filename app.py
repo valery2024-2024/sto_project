@@ -1,17 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-
+# Конфігурація Flask додатку
 app = Flask(__name__)
-
-@app.route('/test')
-def test():
-    return render_template('test.html')
-
-# Налаштування бази даних
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sto.db'  # База даних SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Ініціалізація бази даних
 db = SQLAlchemy(app)
 
 # Модель для збереження записів клієнтів
@@ -21,8 +16,9 @@ class Booking(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(20), nullable=False)
     comment = db.Column(db.Text, nullable=True)
+    email = db.Column(db.String(120), unique=True)
 
-# Ініціалізація бази даних
+# Створення таблиць у базі даних
 with app.app_context():
     db.create_all()
 
@@ -39,18 +35,46 @@ def booking():
         phone = request.form['phone']
         date = request.form['date']
         comment = request.form['comment']
+        email = request.form['email']
+        
+        # Перевірка на унікальність email
+        existing_booking = Booking.query.filter_by(email=email).first()
+        if existing_booking:
+            return "Користувач із таким email вже записаний!", 400
         
         # Створення нового запису
-        new_booking = Booking(name=name, phone=phone, date=date, comment=comment)
+        new_booking = Booking(name=name, phone=phone, date=date, comment=comment, email=email)
         db.session.add(new_booking)
         db.session.commit()
         return redirect(url_for('home'))
-    import os
-    print("Current working directory:", os.getcwd())
-    print("Templates path:", os.path.abspath('templates'))
-    print("Templates files:", os.listdir('templates'))
 
     return render_template('booking.html')
+
+# Адмін-панель для перегляду заявок
+@app.route('/admin')
+def admin():
+    bookings = Booking.query.all()
+    return render_template('admin.html', bookings=bookings)
+
+# API для отримання заявок
+@app.route('/api/bookings', methods=['GET'])
+def get_bookings():
+    bookings = Booking.query.all()
+    return jsonify([{
+        "id": booking.id,
+        "name": booking.name,
+        "phone": booking.phone,
+        "date": booking.date,
+        "comment": booking.comment,
+        "email": booking.email
+    } for booking in bookings])
+
+# Пошук заявок
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    results = Booking.query.filter((Booking.name.contains(query)) | (Booking.phone.contains(query))).all()
+    return render_template('search.html', results=results)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
