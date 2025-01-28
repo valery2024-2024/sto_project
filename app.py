@@ -44,9 +44,9 @@ def add_car():
     if request.method == 'POST':
         name = request.form['name']
         engine = request.form['engine']
-        fuelconsumption = request.form['fuel consumption']
+        fuel_consumption = request.form['fuel consumption']
         register = 'register' in request.form
-        new_car = Car(name=name, engine=int(engine), fuelconsumption=float(fuelconsumption), register=register)
+        new_car = Car(name=name, engine=int(engine), fuel_consumption=float(fuel_consumption), register=register)
         db.session.add(new_car)
         db.session.commit()
         return redirect(url_for('list_cars'))
@@ -59,7 +59,7 @@ def update_car(car_id):
     if request.method == 'POST':
         car.name = request.form['name']
         car.engine = int(request.form['engine'])
-        car.fuelconsumption = float(request.form['fuel consomption'])
+        car.fuel_consumption = float(request.form['fuel_consomption'])
         car.register = 'register' in request.form
         db.session.commit()
         return redirect(url_for('list_cars'))

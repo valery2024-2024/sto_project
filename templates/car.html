@@ -4,34 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cars</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Cars List</h1>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Engine</th>
-            <th>Price</th>
-            <th>Registered</th>
-            <th>Actions</th>
-        </tr>
-        {% for car in cars %}
-        <tr>
-            <td>{{ car.id }}</td>
-            <td>{{ car.name }}</td>
-            <td>{{ car.engine }}</td>
-            <td>{{ car.price }}</td>
-            <td>{{ 'Yes' if car.register else 'No' }}</td>
-            <td>
-                <form action="{{ url_for('update_car', car_id=car.id) }}" method="POST">
-                    <input type="number" name="price" placeholder="New Price">
-                    <button type="submit">Update</button>
-                </form>
-                <a href="{{ url_for('delete_car', car_id=car.id) }}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
+    <table class="cars-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Engine</th>
+                <th>Price</th>
+                <th>Registered</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr>
+                <td>{{ car.id }}</td>
+                <td>{{ car.name }}</td>
+                <td>{{ car.engine }}</td>
+                <td>{{ car.price }}</td>
+                <td>{{ 'Yes' if car.register else 'No' }}</td>
+                <td>
+                    <form action="{{ url_for('update_car', car_id=car.id) }}" method="POST" class="update-form">
+                        <input type="number" name="price" placeholder="New Price">
+                        <button type="submit" class="btn">Update</button>
+                    </form>
+                    <a href="{{ url_for('delete_car', car_id=car.id) }}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 </html>
