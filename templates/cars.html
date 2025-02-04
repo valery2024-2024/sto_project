@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Cars</title>
@@ -9,6 +9,15 @@
 </head>
 <body>
     <h1>List of Cars</h1>
+    <!-- 🔹 Вставка flash-повідомлень перед таблицею -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <a href="{{ url_for('add_car') }}" class="btn btn-add">Add New Car</a>
     <table>
         <thead>

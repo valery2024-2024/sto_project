@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Адмін-панель</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Адмін-панель</h1>
-    <table>
-        <thead>
+  <h1>Адмін-панель</h1>
+   <div class="admin-container">
+       <table>
+           <thead>
             <tr>
                 <th>ID</th>
                 <th>Ім'я</th>
@@ -18,19 +19,27 @@
                 <th>Коментар</th>
                 <th>Email</th>
             </tr>
-        </thead>
-        <tbody>
-            {% for booking in bookings %}
-            <tr>
-                <td>{{ booking.id }}</td>
-                <td>{{ booking.name }}</td>
-                <td>{{ booking.phone }}</td>
-                <td>{{ booking.date }}</td>
-                <td>{{ booking.comment }}</td>
-                <td>{{ booking.email }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
+           </thead>
+           <tbody>
+              {% for booking in bookings %}
+              <tr>
+                  <td>{{ booking.id }}</td>
+                  <td>{{ booking.name }}</td>
+                  <td>{{ booking.phone }}</td>
+                  <td>{{ booking.date }}</td>
+                  <td>{{ booking.comment }}</td>
+                  <td>{{ booking.email }}</td>
+                  <td>
+                    <form action="{{ url_for('delete_booking', booking_id=booking.id) }}" method="POST">
+                        <button type="submit" class="delete-btn">Видалити</button>
+                    </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+       </table>
+   </div>
+   <!-- Підключення JavaScript -->
+   <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+  </body>
 </html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>СТО Рівне</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://kit.fontawesome.com/b813c2103c.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header class="header">
@@ -12,39 +13,59 @@
             <h1>СТО Рівне</h1>
         </div>
         <nav class="nav">
-            <a href="/">Головна</a>
             <div class="dropdown">
-                <a href="#" class="dropdown-button">Послуги</a>
-                <ul class="dropdown-menu" style="display: none;">
-                    <li><a href="/service1">Ремонт двигунів</a></li>
-                    <li><a href="/service2">Діагностика авто</a></li>
-                    <li><a href="/service3">Заміна масла</a></li>
-                    <li><a href="/service4">Ремонт кондиціонерів</a></li>
+                <a href="#" class="dropdown-button">Послуги <span class="arrow">&#9662;</span></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Планове ТО</a></li>
+                    <li><a href="#">Діагностика авто</a></li>
+                    <li><a href="#">Ходова частина</a></li>
+                    <li><a href="#">Рульове керування</a></li>
+                    <li><a href="#">Електрообладнання</a></li>
+                    <li><a href="#">Система кондиціонування</a></li>
+                    <li><a href="#">Стартер</a></li>
+                    <li><a href="#">Генератор</a></li>
+                    <li><a href="#">Трансмісія</a></li>
+                    <li><a href="#">Гальмівна система</a></li>
+                    <li><a href="#">Зчеплення</a></li>
+                    <li><a href="#">3D розвал-сходження</a></li>
+                    <li><a href="#">Шиномонтаж</a></li>
+                    <li><a href="#">Система охолодження</a></li>
                 </ul>
             </div>
             <a href="#">СТО</a>
             <a href="#">Про нас</a>
             <a href="#">Акції</a>
             <a href="#">Контакти</a>
-            <a href="#" class="button">Онлайн запис</a>
+            <a href="/booking" class="button">Онлайн запис</a>
         </nav>
     </header>
+
     <main>
         <section class="hero">
-            <div class="hero-text">
-                <h2>СТО Рівне — ваш стиль автокомфорту</h2>
-                <p>Ремонт автомобілів, стартерів, генераторів, кондиціонерів</p>
-                <a href="/booking" class="button">Онлайн запис</a>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h2 class="highlight-text">
+                    <span class="white-text">Автосервіс (СТО) в Рівному</span> - 
+                    <span class="blue-text">ваш стиль</span> 
+                    <span class="blue-text">автокомфорту</span>
+                </h2>
+                <p>Ви власник авто і не знаєте де ремонтувати і обслуговувати 
+                   свій транспортний засіб в Рівному? Вас хвилює питання 
+                   якісної комп'ютерної діагностики в повному обсязі?  
+                   Тоді ви прийшли за адресою! Наша СТО в місті Рівне до ваших послуг!</p>
             </div>
             <div class="hero-image">
                 <img src="/static/images/service.jpg" alt="СТО Рівне">
             </div>
         </section>
     </main>
+
     <footer>
         <p>&copy; 2025 СТО Рівне. Всі права захищені.</p>
     </footer>
 
     <script src="/static/js/scripts.js"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+
 </body>
 </html>

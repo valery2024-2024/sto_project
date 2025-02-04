@@ -24,7 +24,7 @@ a, button {
     --success-color: #4CAF50;
 }
 
-/* Навігація */
+/* 🔹 Навігація */
 .header {
     display: flex;
     justify-content: space-between;
@@ -32,6 +32,8 @@ a, button {
     padding: 20px;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
+    position: relative;
+    z-index: 10;
 }
 
 .logo h1 {
@@ -41,6 +43,8 @@ a, button {
 }
 
 .nav {
+    display: flex;
+    align-items: center;
     position: relative;
 }
 
@@ -64,10 +68,19 @@ a, button {
     text-decoration: underline;
 }
 
-/* Випадаюче меню */
+/* 🔹 Випадаюче меню */
 .dropdown {
     position: relative;
-    display: inline-block;
+}
+
+.dropdown-button {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .dropdown-menu {
@@ -75,207 +88,360 @@ a, button {
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: var(--secondary-color);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     z-index: 1000;
-    min-width: 200px;
+    min-width: 220px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .dropdown-menu a {
     display: block;
-    padding: 10px 15px;
-    color: var(--text-color);
+    padding: 12px 15px;
+    color: black;
     text-decoration: none;
     font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-menu a:last-child {
+    border-bottom: none;
 }
 
 .dropdown-menu a:hover {
     background-color: var(--primary-color);
-    color: #fff;
+    color: white;
 }
 
-/* Hero секція */
+/* 🔹 Показати меню при наведенні */
+.dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 🔹 Стилі стрілки */
+.arrow {
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+
+/* 🔥 Hero секція */
 .hero {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 40px 20px;
-    background-color: var(--secondary-color);
+    justify-content: space-between;
+    padding: 60px 10%;
+    background: url("/static/images/service.jpg") no-repeat center center;
+    background-size: cover;
+    position: relative;
+    min-height: 500px; /* Гнучка висота */
 }
 
+/* Затемнення */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Темніше затемнення */
+}
+
+.hero-content {
+    text-align: left;
+    max-width: 60%; /* Щоб текст не займав всю ширину */
+    margin-left: -8%; /* Відступ від лівого краю */
+    position: relative;
+    z-index: 2;
+    background: rgba(210, 206, 206, 0.5); /* Напівпрозорий чорний фон */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Контейнер для тексту */
 .hero-text {
     max-width: 50%;
+    color: #14d845;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-text h2 {
     font-size: 36px;
-    color: var(--text-color);
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 15px;
 }
 
-.hero-text a {
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    margin-top: 10px;
+/* Білий і синій текст */
+.white-text {
+    color: #ff6600;
 }
 
-.hero-image img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
+.blue-text {
+    color: #007BFF;
 }
 
-/* Кнопки */
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    background-color: var(--primary-color);
-    text-decoration: none;
-    border-radius: 5px;
-    margin: 10px 0;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+/* Прибираємо окремий блок із зображенням */
+.hero-image {
+    display: none;
 }
 
-.btn:hover {
-    background-color: #e65c00;
+/* 🔹 Адаптація під мобільні пристрої */
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        min-height: auto;
+        padding: 30px;
+    }
+
+    .hero-text {
+        max-width: 100%;
+    }
 }
 
-.btn-danger {
-    background-color: var(--danger-color);
-}
-
-.btn-danger:hover {
-    background-color: #d32f2f;
-}
-
-.btn-success {
-    background-color: var(--success-color);
-}
-
-.btn-success:hover {
-    background-color: #388e3c;
-}
-
-.btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Форма */
+/* 🔹 Стилізація форми */
 form {
-    margin: 20px auto;
     max-width: 500px;
+    margin: 30px auto;
     background: #fff;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-form input, form textarea, form button {
+form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input, form textarea {
     width: 100%;
-    margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 16px;
 }
 
-form input:focus, form textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px rgba(255, 102, 0, 0.5);
-    outline: none;
+form textarea {
+    resize: vertical;
+    min-height: 100px;
 }
 
 form button {
     background-color: var(--primary-color);
     color: white;
-    font-size: 16px;
+    font-size: 18px;
+    padding: 12px 20px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    display: block;
+    width: 100%;
 }
 
 form button:hover {
     background-color: #e65c00;
 }
 
-/* Таблиця */
+/* 🔹 Заголовок форми */
+.form-header {
+    background-color: #007BFF; /* Синій фон */
+    color: white; /* Білий текст */
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* 🔹 Контейнер форми */
+.form-container {
+    max-width: 500px;
+    margin: 30px auto;
+    background: #72d653; /* Темний фон */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔹 Flash-повідомлення */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Успішне повідомлення (зелений фон) */
+.alert-success {
+    background-color: var(--success-color);
+    color: white;
+    border: 1px solid #2e7d32;
+}
+
+/* Повідомлення про помилку (червоний фон) */
+.alert-danger {
+    background-color: var(--danger-color);
+    color: white;
+    border: 1px solid #c62828;
+}
+
+/* Анімація появи */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+
+/* 🔹 Стилі для вводу */
+.form-container input, 
+.form-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #1292ed8a;
+    color: rgb(5, 5, 5);
+}
+
+/* 🔹 Кнопка */
+.form-container button {
+    background-color: #007BFF;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+/* 🔹 Стилі для адмін-панелі */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-top: 20px;
     font-size: 16px;
     text-align: left;
 }
 
-table th, table td {
+th, td {
     padding: 12px;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
-table th {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
+th {
+    background-color: #ff6600;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-table tr:nth-child(even) {
+tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-table tr:hover {
+tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Карти */
-.card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin: 10px;
+/* 🔹 Вирівнювання заголовка */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 🔹 Контейнер для таблиці */
+.admin-container {
+    width: 80%;
+    margin: 0 auto;
     padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-.card img {
-    max-width: 100%;
-    height: auto;
+/* 🔹 Стилі для таблиці */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
 }
 
-.card h3 {
-    margin: 10px 0;
-    font-size: 20px;
-    color: var(--primary-color);
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
 }
 
-.card p {
-    color: var(--text-color);
+th {
+    background-color: #ff6600;
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* 🔹 Вирівнювання заголовка */
+h1 {
+    text-align: center;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.delete-btn {
+    background-color: #e53935;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 14px;
 }
 
-/* Медійні запити */
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .hero {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .hero-text {
-        max-width: 100%;
-    }
-
-    .btn {
-        display: block;
-        margin: 10px 0;
-    }
+.delete-btn:hover {
+    background-color: #c62828;
 }
+

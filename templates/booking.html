@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Запис на ремонт</title>
+    <title>Запис на ремонт вашого</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
@@ -21,25 +21,26 @@
         </nav>
     </header>
     <main>
-        <h2>Запис на ремонт</h2>
+        <div class="form-container">
+        <div class="form-header">Для запису на автосервіс 
+            заповніть, будь ласка, форму:</div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
         <form action="/booking" method="POST">
-            <label for="name">Ім'я:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
-
-            <label for="phone">Телефон:</label><br>
-            <input type="tel" id="phone" name="phone" required><br><br>
-
-            <label for="date">Дата ремонту:</label><br>
-            <input type="date" id="date" name="date" required><br><br>
-
-            <label for="comment">Коментар:</label><br>
-            <textarea id="comment" name="comment"></textarea><br><br>
-
-            <label for="email">Email</label><br>
-            <input tupe="email" id="email" name="email" required><br><br>
-
+            <input type="text" id="name" name="name" placeholder="Введіть ваше ім'я"><br><br>
+            <input type="tel" id="phone" name="phone" placeholder="+380XXXXXXXXX" required><br><br>
+            <input type="date" id="date" name="date"><br><br>
+            <textarea id="comment" name="comment" placeholder="Додайте коментар (необов'язково)"></textarea><br><br>
+            <input type="email" id="email" name="email" placeholder="email@gmail.com" required><br><br>
             <button type="submit">Записатися</button>
         </form>
+    </div>
     </main>
     <footer>
         <p>&copy; 2025 СТО Рівне. Всі права захищені.</p>
