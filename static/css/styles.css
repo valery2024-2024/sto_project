@@ -159,7 +159,7 @@ a, button {
     margin-left: -8%; /* Відступ від лівого краю */
     position: relative;
     z-index: 2;
-    background: rgba(210, 206, 206, 0.5); /* Напівпрозорий чорний фон */
+    background: rgba(255, 255, 255, 0.8); /* Напівпрозорий чорний фон */
     padding: 20px;
     border-radius: 10px;
 }
@@ -185,7 +185,7 @@ a, button {
 }
 
 .blue-text {
-    color: #007BFF;
+    color: #2476f9;
 }
 
 /* Прибираємо окремий блок із зображенням */
@@ -431,6 +431,7 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* 🔹 Кнопка видалення */
 .delete-btn {
     background-color: #e53935;
     color: white;
@@ -445,3 +446,475 @@ h1 {
     background-color: #c62828;
 }
 
+/* 🔹 Кнопка редагування */
+.edit-btn {
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+.edit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 🔹 Блок "Про нас" */
+.about-section {
+    background-color: #f9f9f9;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.about-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.about-text {
+    flex: 1;
+    padding: 20px;
+}
+
+.about-text ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-text ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+}
+
+.about-text ul li::before {
+    content: "✔";
+    color: #4CAF50;
+    position: absolute;
+    left: 0;
+    font-size: 20px;
+}
+
+.about-image {
+    flex: 1;
+    text-align: center;
+}
+
+.about-image img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔹 Кнопка */
+.btn-primary {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 25px;
+    background-color: #ff6600;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #e65c00;
+}
+
+/* 🔹 Адаптація для мобільних пристроїв */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .about-image {
+        margin-top: 20px;
+    }
+}
+
+/* 🔹 Блок "Наші послуги" */
+.services-section {
+    background-color: #ffffff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.services-section h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.services-section p {
+    font-size: 18px;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto 30px;
+}
+
+.services-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    width: calc(33.333% - 20px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-card img {
+    max-width: 80px;
+    margin-bottom: 15px;
+}
+
+.service-card h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.service-card p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 1024px) {
+    .service-card {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .services-container {
+        flex-direction: column;
+    }
+    
+    .service-card {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* 🔹 Блок "Чому обирають нас?" */
+.why-choose-us {
+    background-color: #f9f9f9;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.why-choose-us h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.why-choose-us p {
+    font-size: 18px;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto 30px;
+}
+
+.why-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.why-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: calc(33.333% - 20px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.why-card:hover {
+    transform: translateY(-5px);
+}
+
+.why-card i {
+    font-size: 50px;
+    color: #ff6600;
+    margin-bottom: 15px;
+}
+
+.why-card h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.why-card p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 1024px) {
+    .why-card {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .why-container {
+        flex-direction: column;
+    }
+    
+    .why-card {
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* 🔹 Блок "Відгуки клієнтів" */
+.reviews {
+    background: #f9f9f9;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.reviews h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.review-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.review-slide {
+    display: none;
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+}
+
+.review-slide.active {
+    display: block;
+}
+
+.review-slide img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.review-slide h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.review-slide p {
+    font-size: 16px;
+    color: #666;
+}
+
+.review-nav {
+    margin-top: 20px;
+}
+
+.review-nav button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 18px;
+    margin: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.review-nav button:hover {
+    background: #e65c00;
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 768px) {
+    .review-slide {
+        width: 90%;
+    }
+}
+
+/* 🔹 Блок "Контакти" */
+.contacts {
+    background: #f9f9f9;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.contacts h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.contacts-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.contact-info {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    width: 350px;
+}
+
+.contact-info h3 {
+    font-size: 20px;
+    color: #ff6600;
+    margin-bottom: 10px;
+}
+
+.contact-info p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.contact-info i {
+    color: #ff6600;
+    margin-right: 10px;
+}
+
+.contact-map {
+    width: 500px;
+    height: 300px;
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 768px) {
+    .contacts-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contact-info, .contact-map {
+        width: 90%;
+    }
+}
+
+/* 🔹 Форма зворотного зв’язку */
+.contact-form {
+    background: #fff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.contact-form h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 10px;
+}
+
+.contact-form p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.contact-form form {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+    text-align: left;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.contact-form button {
+    background-color: #ff6600;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+}
+
+.contact-form button:hover {
+    background-color: #e65c00;
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 768px) {
+    .contact-form form {
+        width: 90%;
+    }
+}
