@@ -68,9 +68,10 @@ a, button {
     text-decoration: underline;
 }
 
-/* 🔹 Випадаюче меню */
+/* 🔹 Випадаюче меню (оновлене) */
 .dropdown {
     position: relative;
+    display: inline-block;
 }
 
 .dropdown-button {
@@ -81,6 +82,11 @@ a, button {
     padding: 10px;
     display: flex;
     align-items: center;
+    transition: color 0.3s ease;
+}
+
+.dropdown-button:hover {
+    color: #ff6600; /* Помаранчевий відтінок при наведенні */
 }
 
 .dropdown-menu {
@@ -89,23 +95,24 @@ a, button {
     top: 100%;
     left: 0;
     background-color: white;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     z-index: 1000;
-    min-width: 220px;
+    min-width: 180px; /* Зменшено ширину */
     overflow: hidden;
     opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .dropdown-menu a {
     display: block;
-    padding: 12px 15px;
+    padding: 10px 15px;
     color: black;
     text-decoration: none;
     font-size: 14px;
     border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .dropdown-menu a:last-child {
@@ -113,7 +120,7 @@ a, button {
 }
 
 .dropdown-menu a:hover {
-    background-color: var(--primary-color);
+    background-color: #ff6600; /* Помаранчевий фон при наведенні */
     color: white;
 }
 
@@ -839,6 +846,11 @@ h1 {
     height: 300px;
 }
 
+.contact-map iframe {
+    min-width: 300px;
+    max-width: 100%;
+}
+
 /* 🔹 Адаптація */
 @media (max-width: 768px) {
     .contacts-container {
@@ -918,3 +930,554 @@ h1 {
         width: 90%;
     }
 }
+.sto-container {
+    text-align: center;
+    padding: 50px 0;
+}
+
+.sto-container h2 {
+    font-size: 32px;
+    color: #ff6600;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sto-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.sto-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 250px;
+    transition: transform 0.3s ease;
+}
+
+.sto-card:hover {
+    transform: translateY(-5px);
+}
+
+.sto-card i {
+    font-size: 40px;
+    color: #ff6600;
+    margin-bottom: 10px;
+}
+
+.sto-card h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.sto-card p {
+    font-size: 16px;
+    color: #666;
+}
+/* Загальні стилі для меню */
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-button {
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+/* Випадаюче меню */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 3px 0;
+    margin: 0;
+    min-width: 180px;
+    display: none;
+}
+
+.dropdown-menu li {
+    padding: 3px 10px;
+    text-align: left;
+}
+
+.dropdown-menu li a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-size: 16px;
+    transition: 0.3s;
+    padding: 3px 0;
+}
+
+.dropdown-menu li a:hover {
+    background: #ff6600;
+}
+
+/* Показуємо меню при наведенні */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+/* 🔹 Блок "Наші СТО у містах" */
+.sto-section {
+    text-align: center;
+    padding: 60px 0;
+    background: #f9f9f9;
+}
+
+.sto-section h2 {
+    font-size: 32px;
+    color: #ff6600;
+    margin-bottom: 10px;
+}
+
+.sto-section p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* 🔹 Оформлення кожного СТО */
+.sto-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+/* 🔹 Чергування фото та тексту */
+.sto-item.reverse {
+    flex-direction: row-reverse;
+}
+
+/* 🔹 Текст */
+.sto-text {
+    flex: 1;
+    text-align: left;
+}
+
+.sto-text h3 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.sto-text ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sto-text li {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 20px;
+}
+.sto-text li::before {
+    content: "✔️";
+    position: absolute;
+    left: 0;
+    color: #ff6600;
+}
+/* 🔹 Кнопка */
+.sto-text .btn-primary {
+    display: inline-block;
+    margin-top: 20px;
+    background: #ff6600;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.sto-text .btn-primary:hover {
+    background: #e65500;
+}
+
+/* 🔹 Зображення */
+.sto-image {
+    flex: 1;
+    text-align: center;
+}
+
+.sto-image img {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔹 Адаптація */
+@media (max-width: 900px) {
+    .sto-item {
+        flex-direction: column !important;
+        text-align: center;
+    }
+
+    .sto-text {
+        text-align: center;
+    }
+
+    .sto-text ul {
+        text-align: left;
+        display: inline-block;
+    }
+
+    .sto-image img {
+        max-width: 100%;
+    }
+}
+.promo-section {
+    background: #fffbf2; /* Світлий фон */
+    padding: 40px 0;
+}
+
+.promo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.promo-text {
+    flex: 1;
+    padding: 20px;
+}
+
+.promo-text h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff6600;
+}
+
+.promo-text p {
+    font-size: 18px;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: #ff6600;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #e65c00;
+}
+
+.promo-image {
+    flex: 1;
+    text-align: right;
+}
+
+.promo-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+/* 🔹 Загальні стилі для форми входу */
+.login-container, .profile-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h2, .profile-container h2 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ff6600;
+    margin-bottom: 20px;
+}
+
+.login-container label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.login-container button {
+    background-color: #ff6600;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.login-container button:hover {
+    background-color: #e65c00;
+}
+
+.login-container a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+/* Загальні стилі для форми */
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: #ff6600;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.auth-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.auth-container button {
+    background-color: #ff6600;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.auth-container button:hover {
+    background-color: #e65c00;
+}
+
+.auth-container a {
+    display: block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: #ff6600;
+    font-weight: bold;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
+/* Загальні стилі для профілю */
+.profile-container {
+    max-width: 100%;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile-container h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.profile-container p {
+    font-size: 16px;
+    color: #555;
+}
+
+.profile-container a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.profile-container a:hover {
+    text-decoration: underline;
+}
+
+.profile-buttons {
+    display: block;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.profile-buttons a {
+    display: block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.logout-btn {
+    background-color: #007cf95e;
+    color: white;
+}
+.password-btn {
+    background-color: #ffa500;
+    color: white;
+}
+.home-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+.profile-buttons a:hover {
+    opacity: 0.8;
+}
+
+.logout {
+    background: #e53935;
+    color: white;
+}
+
+.logout:hover {
+    background: #c62828;
+}
+
+.change-password {
+    background: #ff9800;
+    color: white;
+}
+
+.change-password:hover {
+    background: #e65100;
+}
+
+.home-button {
+    background: #4CAF50;
+    color: white;
+}
+
+.home-button:hover {
+    background: #bdebc0;
+}
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.register-btn {
+    background-color: #ff6600;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #e65c00;
+}
+
+.home-btn {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.home-btn:hover {
+    background-color: #388E3C;
+}
+
+
+/* 🔹 Адаптація */
+@media (max-width: 768px) {
+    .login-container, .profile-container {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+.register-title {
+    color: red;
+    font-weight: bold;
+}
+

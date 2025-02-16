@@ -21,6 +21,36 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log("Dropdown elements not found!");
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdownButtons = document.querySelectorAll('.dropdown-button');
+    
+        dropdownButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const menu = button.nextElementSibling;
+                
+                // Закриваємо всі відкриті меню
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    if (dropdown !== menu) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+    
+                // Перемикаємо стан поточного меню
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    
+        // Закриваємо меню при кліку за межами
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
+    });
+    
 
     // Видалення запису
     setTimeout(() => {

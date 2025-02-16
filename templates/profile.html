@@ -1,0 +1,13 @@
+<form methot="POST">
+  <div class="profile-container">
+      <h1>Привіт, {{ user_name }}!</h1>
+      <p>Email: {{ user_email }}</p>
+    
+      <div class="profile-buttons">
+          <a href="{{ url_for('logout') }}" class="logout-btn">Вийти 🚪</a>
+          <a href="{{ url_for('change_password') }}" class="password-btn">🔑 Змінити пароль</a>
+          <a href="{{ url_for('home') }}" class="home-btn">🏠 На головну</a>
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=2">
+      </div>
+  </div>
+</form>

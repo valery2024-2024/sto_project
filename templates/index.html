@@ -4,39 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>СТО Рівне</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://kit.fontawesome.com/b813c2103c.js" crossorigin="anonymous"></script>
 </head>
+<!-- Логотип як головна сторінка -->
 <body>
     <header class="header">
         <div class="logo">
-            <h1>СТО Рівне</h1>
+            <h1><a href="/">СТО Рівне</a></h1>
         </div>
         <nav class="nav">
             <div class="dropdown">
-                <a href="#" class="dropdown-button">Послуги <span class="arrow">&#9662;</span></a>
+                <a href="#services" class="dropdown-button">Послуги <span class="arrow">&#9662;</span></a>
                 <ul class="dropdown-menu">
                     <li><a href="#">Планове ТО</a></li>
-                    <li><a href="#">Діагностика авто</a></li>
-                    <li><a href="#">Ходова частина</a></li>
+                    <li><a href="#services">Діагностика авто</a></li>
+                    <li><a href="#services">Ходова частина</a></li>
                     <li><a href="#">Рульове керування</a></li>
                     <li><a href="#">Електрообладнання</a></li>
-                    <li><a href="#">Система кондиціонування</a></li>
+                    <li><a href="#services">Система кондиціонування</a></li>
                     <li><a href="#">Стартер</a></li>
                     <li><a href="#">Генератор</a></li>
                     <li><a href="#">Трансмісія</a></li>
-                    <li><a href="#">Гальмівна система</a></li>
+                    <li><a href="#services">Гальмівна система</a></li>
                     <li><a href="#">Зчеплення</a></li>
                     <li><a href="#">3D розвал-сходження</a></li>
-                    <li><a href="#">Шиномонтаж</a></li>
+                    <li><a href="#services">Шиномонтаж</a></li>
                     <li><a href="#">Система охолодження</a></li>
                 </ul>
             </div>
-            <a href="#">СТО</a>
+            <div class="dropdown">
+                <a href="sto" class="dropdown-button sto-button">СТО <span class="arrow">&#9662;</span></a>
+                <ul class="dropdown-menu sto-menu">
+                    <li><a href="#">Рівне Київська</a></li>
+                    <li><a href="#">Рівне Підкови</a></li>
+                    <li><a href="#">Луцьк Технічна</a></li>
+                </ul>
+            </div>
+            <a href="#sto">СТО</a>
             <a href="#about">Про нас</a>
-            <a href="#services">Акції</a>
+            <a href="#promo">Акції</a>
             <a href="#contact">Контакти</a>
             <a href="/booking" class="button">Онлайн запис</a>
+        {% if 'user_id' in session %}
+            <a href="{{ url_for('profile') }}">Профіль</a>
+            <a href="{{ url_for('logout') }}">Вийти</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Вхід</a>
+            <a href="{{ url_for('register') }}">Реєстрація</a>
+        {% endif %}
         </nav>
     </header>
 
@@ -77,6 +93,19 @@
                     <div class="about-image">
                         <img src="{{ url_for('static', filename='images/sto_about.jpg') }}" alt="Наш автосервіс">
                     </div>
+                </div>
+            </div>
+        </section>
+        <!-- 🔹 Блок "Акції" -->
+        <section id="promo" class="promo-section">
+            <div class="promo-container">
+                <div class="promo-text">
+                    <h2>Акція: Шиномонтаж без черг</h2>
+                    <p>Запишіться онлайн та отримайте знижку 10% на шиномонтаж.</p>
+                    <a href="/booking" class="btn-primary">Записатись зараз</a>
+                </div>
+                <div class="promo-image">
+                    <img src="/static/images/tyre_service.png" alt="Шиномонтаж">
                 </div>
             </div>
         </section>
@@ -170,8 +199,29 @@
                 </div>
             </div>
         </section>
+        <!-- "Блок сто"-->
+        <section id="sto" class="sto-container">
+            <h2>Наші СТО</h2>
+            <div class="sto-grid">
+                <div class="sto-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Рівне</h3>
+                    <p>Сучасний сервіс для вашого авто</p>
+                </div>
+                <div class="sto-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Луцьк</h3>
+                    <p>Сучасний сервіс для вашого авто</p>
+                </div>
+                <div class="sto-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Славута</h3>
+                    <p>Сучасний сервіс для вашого авто</p>
+                </div>
+            </div>
+        </section> 
         <!-- "Блок контакти"-->
-        <section class="contacts">
+        <section id="contact" class="contacts">
             <h2>Наші контакти</h2>
             <div class="contacts-container">
                 <div class="contact-info">
@@ -214,8 +264,6 @@
                 <button type="submit">Надіслати</button>
             </form>
         </section>
-        
-        
         <!-- 🔹 Блок "Відгуки клієнтів" -->
         <section id="reviews" class="reviews">
             <h2>Відгуки наших клієнтів</h2>
@@ -250,9 +298,6 @@
     <footer>
         <p>&copy; 2025 СТО Рівне. Всі права захищені.</p>
     </footer>
-
     <script src="/static/js/scripts.js"></script>
-    <link rel="stylesheet" href="/static/css/styles.css">
-
 </body>
 </html>
