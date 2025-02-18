@@ -8,10 +8,22 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 # Конфігурація Flask додатку
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, "instance", "sto.db")
 app = Flask(__name__, static_folder="static")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sto.db'  # База даних SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"  # База даних SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("SECRET_KEY", "your_secret_key")
+
+
+#from app import db
+#from app import User
+
+#db.create_all()  # Створює таблиці, якщо їх немає
+
+# Перевіряємо, чи є користувачі в базі
+#users = User.query.all()
+#print(users)
 
 # Налаштування Flask-Mail (БЕЗ `MAIL_PASSWORD` в коді)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -53,7 +65,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)    
+    password = db.Column(db.String(200), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False) #Додаємо роль    
 
 # Створення таблиць у БД
 with app.app_context():
@@ -94,12 +107,14 @@ def login():
             session['user_id'] = user.id
             session['user_name'] = user.name
             session['user_email'] = user.email
+            session['is_admin'] = user.is_admin  # Додаємо роль
             flash('Ви успішно увійшли!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Невірний email або пароль', 'danger')
 
     return render_template('login.html')
+
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
@@ -160,6 +175,33 @@ def admin():
     bookings = Booking.query.all()
     return render_template('admin.html', bookings=bookings)
 
+@app.route('/admin/users')
+def admin_users():
+    #if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+        #flash('❌ У вас немає доступу!', 'danger')
+        #return redirect(url_for('home'))
+    #
+    users = User.query.all()
+    return render_template('admin_users.html', users=users)
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+        flash('❌ У вас немає доступу!', 'danger')
+        return redirect(url_for('home'))
+    
+    user = User.query.get_or_404(user_id)
+    
+    # Захист від видалення себе
+    if user.id == session['user_id']:
+        flash('❌ Ви не можете видалити свій обліковий запис!', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash('✅ Користувач видалений!', 'success')
+    return redirect(url_for('admin_users'))
+
 @app.route ('/sto')
 def sto():
     return render_template('sto.html')
@@ -180,6 +222,7 @@ def update_booking(booking_id):
         return redirect(url_for('admin'))
 
     return render_template('update_booking.html', booking=booking)
+
 
 
 # -------------------- БРОНЮВАННЯ --------------------

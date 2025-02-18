@@ -35,10 +35,10 @@
             </div>
             <div class="dropdown">
                 <a href="sto" class="dropdown-button sto-button">СТО <span class="arrow">&#9662;</span></a>
-                <ul class="dropdown-menu sto-menu">
-                    <li><a href="#">Рівне Київська</a></li>
-                    <li><a href="#">Рівне Підкови</a></li>
-                    <li><a href="#">Луцьк Технічна</a></li>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('sto', city='rivne', branch='soborna') }}">СТО Рівне</a></li>
+                    <li><a href="{{ url_for('sto', city='lutsk', branch='rivnenska') }}">СТО Луцьк</a></li>
+                    <li><a href="{{ url_for('sto', city='slavuta', branch='ostrozka') }}">СТО Славута</a></li>
                 </ul>
             </div>
             <a href="#sto">СТО</a>
