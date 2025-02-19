@@ -15,16 +15,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"  # База да�
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("SECRET_KEY", "your_secret_key")
 
-
-#from app import db
-#from app import User
-
-#db.create_all()  # Створює таблиці, якщо їх немає
-
-# Перевіряємо, чи є користувачі в базі
-#users = User.query.all()
-#print(users)
-
 # Налаштування Flask-Mail (БЕЗ `MAIL_PASSWORD` в коді)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -88,7 +78,8 @@ def register():
             return redirect(url_for('register'))
 
         # Додаємо нового користувача
-        new_user = User(name=name, email=email, password=hashed_password)
+        is_first_user = User.query.count() == 0
+        new_user = User(name=name, email=email, password=hashed_password, is_admin=is_first_user)
         db.session.add(new_user)
         db.session.commit()
         flash('Реєстрація успішна! Тепер увійдіть.', 'success')
@@ -159,6 +150,23 @@ def profile():
     user = User.query.get(session['user_id'])
     return render_template('profile.html', user_name=session.get('user_name', 'Користувач'), user_email=session.get('user_email', ''))
 
+# Можливість редагувати профіль
+@app.route('/profile', methods=['PUT'])
+def update_profile():
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    user = User.query.get(session['user_id'])
+    data = request.get_json()
+    
+    if 'name' in data:
+        user.name = data['name']
+    if 'password' in data:
+        user.password = generate_password_hash(data['password'], method='pbkdf2:sha256')
+    
+    db.session.commit()
+    return jsonify({"message": "Profile updated"})
+
 @app.route('/logout') #Вихід із системи
 def logout():
     session.pop('user_id', None)
@@ -177,10 +185,10 @@ def admin():
 
 @app.route('/admin/users')
 def admin_users():
-    #if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
-        #flash('❌ У вас немає доступу!', 'danger')
-        #return redirect(url_for('home'))
-    #
+    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+        flash('❌ У вас немає доступу!', 'danger')
+        return redirect(url_for('home'))
+    
     users = User.query.all()
     return render_template('admin_users.html', users=users)
 
