@@ -50,6 +50,62 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    document.getElementById("login-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+    
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+    
+        let response = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+    
+        let data = await response.json();
+        
+        if (response.ok) {
+            localStorage.setItem("access_token", data.access_token); // Зберігаємо токен
+            window.location.href = "/profile"; // Перенаправляємо на профіль
+        } else {
+            alert("Помилка входу: " + data.message);
+        }
+    });
+    
+    document.addEventListener("DOMContentLoaded", async function() {
+        let token = localStorage.getItem("access_token");//Отримуємо токен
+    
+        if (!token) {
+            window.location.href = "/login"; // Якщо токена немає — перенаправляємо на логін
+        }
+    
+        let response = await fetch("/profile", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token // Додаємо токен у заголовок
+            }
+        });
+    
+        let data = await response.json();
+    
+        if (response.ok) {
+            document.getElementById("profile-info").innerText = `Привіт, ${data.name}!`;
+        } else {
+            alert("Помилка доступу до профілю: " + data.msg);
+            window.location.href = "/login"; // Якщо помилка — повертаємо на сторінку входу
+        }
+    });
+
+    document.getElementById("logout").addEventListener("click", function(event) {
+        event.preventDefault(); // Зупиняємо стандартний перехід по посиланню
+        localStorage.removeItem("access_token"); // Видаляємо токен
+        window.location.href = "/login"; // Переходимо на сторінку входу
+    });
+    
+    
     
 
     // Видалення запису

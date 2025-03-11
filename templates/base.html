@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СТО - Адмінка</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Панель керування</h1>
+        <nav class="navbar">
+            <a href="{{ url_for('home') }}" class="nav-link">Головна</a>
+            <a href="{{ url_for('admin_users') }}" class="nav-link">
+                 Керування користувачами
+            </a>
+            <a href="#" id="logout">Вийти</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 СТО - Адмінка</p>
+    </footer>
+    <script>
+        document.getElementById("logout").addEventListener("click", function(event) {
+            event.preventDefault(); // 🔹 Забороняємо стандартний перехід
+            localStorage.removeItem("access_token"); // 🔹 Видаляємо токен
+            window.location.href = "/login"; // 🔹 Повертаємо користувача на сторінку входу
+        });
+    </script>
+</body>
+</html>

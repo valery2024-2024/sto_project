@@ -2,8 +2,7 @@
   <div class="profile-container">
       <h1>Привіт, {{ user_name }}!</h1>
       <p>Email: {{ user_email }}</p>
-      <p>Роль: {% if session.is_admin %}Адміністратор{% else %}Користувач{% endif %}</p>
-
+      <p>Роль: {% if user.is_admin %} Адміністратор {% else %} Користувач {% endif %}</p>
       <div class="profile-buttons">
           <a href="{{ url_for('logout') }}" class="logout-btn">Вийти 🚪</a>
           <a href="{{ url_for('change_password') }}" class="password-btn">🔑 Змінити пароль</a>
@@ -12,3 +11,37 @@
       </div>
   </div>
 </form>
+<script>
+  async function loadProfile() {
+      let token = localStorage.getItem("access_token");
+      if (!token) {
+          console.log("❌ Токен відсутній! Перенаправлення на вхід.");
+          window.location.href = "/login";
+          return;
+      }
+
+      let response = await fetch("/profile", {
+          method: "GET",
+          headers: {
+              "Authorization": "Bearer " + token,  // ✅ Передаємо токен у заголовку
+              "Content-Type": "application/json"
+          }
+      });
+
+      let data = await response.json();
+
+      if (response.ok) {
+          document.getElementById("user-name").innerText = data.name;
+          document.getElementById("user-email").innerText = data.email;
+      } else {
+          alert("❌ Помилка доступу: " + (data.msg || "Невідома помилка"));
+          window.location.href = "/login";
+      }
+  }
+
+  loadProfile();
+</script>
+
+<h2>Профіль користувача</h2>
+<p>Ім'я: <span id="user-name"></span></p>
+<p>Email: <span id="user-email"></span></p>
