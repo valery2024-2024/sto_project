@@ -1,15 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session, send_from_directory
+from flask import Flask, make_response, render_template, request, redirect, url_for, jsonify, flash, session, send_from_directory
+from flask_login import login_required, current_user, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-#from flask_jwt import JWT, jwt_required, current_identity
-#from werkzeug.security import safe_str_cmp
+from flask_cors import CORS
 import os
 import logging
-
 
 def safe_str_cmp(a, b):
     return a == b
@@ -22,7 +21,7 @@ app = Flask(__name__, static_folder="static")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"  # База даних SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
-app.config['JWT_SECRET_KEY'] = 'super-secret'
+app.config['JWT_SECRET_KEY'] = 'super-secret-key'
 
 # Налаштування Flask-Mail (БЕЗ `MAIL_PASSWORD` в коді)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -32,14 +31,45 @@ app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME", "your_email@gmail.com")
 app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD", "your_app_password")
 app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
 
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Замініть на ваш ключ
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']  # Для використання як у заголовках, так і в cookies
+app.config['JWT_HEADER_NAME'] = 'Authorization'
+app.config['JWT_HEADER_TYPE'] = 'Bearer'
+app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token_cookie'
+app.config['JWT_COOKIE_SECURE'] = False
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+
+
 # Ініціалізація бази даних та пошти
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 jwt = JWTManager(app)
-
+CORS(app, supports_credentials=True)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 # -------------------- МОДЕЛІ БД --------------------
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
+    email = db.Column(db.String(100))
+    appointments = db.relationship('Appointment', backref='client', lazy=True)
+
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    date = db.Column(db.String(20))
+    time = db.Column(db.String(20))
+    service = db.Column(db.String(100))
+    comment = db.Column(db.Text)
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    message = db.Column(db.Text)
 
 class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +77,8 @@ class Car(db.Model):
     engine = db.Column(db.Integer, nullable=False)
     fuel_consumption = db.Column(db.Float, nullable=False)
     register = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_car_user_id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('cars', lazy=True))
 
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,19 +94,18 @@ class ContactMessage(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     message = db.Column(db.Text, nullable=False)
 
-# Модель користувача
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False) #Додаємо роль  
+    is_admin = db.Column(db.Boolean, default=False) 
 
     def __str__(self):
         return f"User(id={self.id}, name={self.name}, email={self.email})"
 
 # Функції JWT
-def authenticate(email, password):
+def authenticate(email, password): # Модель користувача # зв’язок з авто #Додаємо роль
     user = User.query.filter_by(email=email).first()
     if user and check_password_hash(user.password, password):
         return user
@@ -93,48 +124,11 @@ def get_token(email):
 
 
 
-#jwt = JWTManager(app)
-#with app.app_context():
-    #user = User.query.filter_by(email='example@example.com').first()  # Заміни на правильний email
-#if user:
-   #token = create_access_token(identity=user.id)
-#else:
-    #print("Перевірка чи працює  Користувача не знайдено.")
-
 # Створення таблиць у БД
 with app.app_context():
     db.create_all()
 
  
-# -------------------- ГОЛОВНІ МАРШРУТИ --------------------
-
-#@app.route('/register', methods=['GET', 'POST']) #Реєстрація нового користувача
-#def register_user():
-    #if request.method == 'POST':
-       #name = request.form['name']
-       #email = request.form['email']
-       #password = request.form['password']
-       #hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        
-
-       # Перевіряємо, чи вже є такий email
-       #existing_user = User.query.filter_by(email=email).first()
-       #if existing_user:
-           #flash('Користувач з таким email вже існує!', 'danger')
-           #return redirect(url_for('register'))
-
-       # Додаємо нового користувача
-       ##is_first_user = User.query.count() == 0
-       #new_user = User(name=name, email=email, password=hashed_password, is_admin=is_first_user)
-       #db.session.add(new_user)
-       #db.session.commit()
-       #flash('Реєстрація успішна! Тепер увійдіть.', 'success')
-       #return redirect(url_for('login'))
-
-    #return render_template('register.html')
-
-
-
 @app.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
@@ -148,17 +142,10 @@ def register():
         if request.is_json:  # Якщо це API-запит
             data = request.get_json()
         else: 
-            data = request.form    
-            #name = data['name']
+            data = request.form
         name = data.get('name')
-            #email = data['email']
         email = data.get('email')
-            #password = data['password']
         password = data.get('password')
-        #else:  # Якщо це форма HTML
-            #name = request.form['name']
-            #email = request.form['email']
-            #password = request.form['password']
         if not name or not email or not password:
             flash("Всі поля є обов'язковими!", "danger")
             return redirect(url_for('register'))    
@@ -169,7 +156,6 @@ def register():
         if existing_user:
             flash('Користувач з таким email вже існує!', 'danger')
             return redirect(url_for('register'))
-            #return jsonify({"message": "Користувач з таким email вже існує!"}), 400
 
         is_first_user = User.query.count() == 0
         new_user = User(name=name, email=email, password=hashed_password, is_admin=is_first_user)
@@ -177,90 +163,91 @@ def register():
         db.session.commit()
         flash('Реєстрація успішна! Тепер увійдіть', 'success')
         return redirect(url_for('login'))
-
-        #if request.is_json:
-            #return jsonify({"message": "Користувач зареєстрований!"}), 201
-        #else:
-            #flash('Реєстрація успішна! Тепер увійдіть.', 'success')
-            #return redirect(url_for('login'))
-
     return render_template('register.html')
 
+# Де User — моя модель користувача
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@app.route('/profile_with_cars')
+def profile_with_cars():
+    return render_template('profile_with_cars.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        if request.is_json:
-            data = request.get_json()
-        else:
-            data = request.form
+    if request.method == 'GET':
+        return render_template("login.html")
+
+    try:
+        data = request.get_json(force=True)
         email = data.get('email')
         password = data.get('password')
+        print(f"Отримано email: {email}, пароль: {password}")
+    except Exception as e:
+        print(f"JSON parsing error: {e}")
+        return jsonify({"msg": "Invalid JSON"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        print("Користувача не знайдено")
+        return jsonify({"msg": "Користувача не знайдено"}), 404
+
+    if not check_password_hash(user.password, password):
+        print("Пароль невірний")
+        return jsonify({"msg": "Невірний пароль"}), 401
+
+    try:
+        access_token = create_access_token(identity=str(user.id))
+        print(f"Токен створено: {access_token}")
+        response = make_response(jsonify({"access_token": access_token}))
+        response.set_cookie("access_token_cookie", access_token, httponly=True)
+        return response, 200
+    except Exception as e:
+        print(f"Помилка створення токена: {e}")
+        return jsonify({"msg": "Token generation error"}), 500
+
+
+@app.route('/api/add_appointment', methods=['POST'])
+def add_appointment():
+    data = request.json
+    client = Client(name=data['name'], phone=data['phone'], email=data.get('email'))
+    db.session.add(client)
+    db.session.commit()
     
-        user = User.query.filter_by(email=email).first()
+    appointment = Appointment(
+        client_id=client.id,
+        date=data['date'],
+        time=data['time'],
+        service=data['service'],
+        comment=data.get('comment', '')
+    )
+    db.session.add(appointment)
+    db.session.commit()
+    return jsonify({'message': 'Запис успішно додано'}), 201
 
-        if user and check_password_hash(user.password, password):
-            access_token = create_access_token(identity=user.id)
+@app.route('/api/contact_message', methods=['POST'])
+def contact_message():
+    data = request.json
+    message = Message(name=data['name'], email=data['email'], message=data['message'])
+    db.session.add(message)
+    db.session.commit()
+    return jsonify({'message': 'Повідомлення надіслано'}), 200
 
-            # ✅ Додаємо користувача в сесію
-            session['user_id'] = user.id
-            session['user_name'] = user.name
-            session['user_email'] = user.email
-
-            print(f"Отримано email: {email}, password: {password}")
-
-            # Якщо це API-запит, повертаємо токен
-            if request.is_json:
-                return jsonify({"access_token": access_token, "user": user.name}), 200
-            
-            flash("Вхід успішний!", "success")
-            return redirect(url_for("home"))  # Переадресовуємо на головну сторінку
-        
-        flash("Невірні дані!", "danger")
-        return redirect(url_for("login"))
-    
-    return render_template("login.html")
-    #return jsonify({"message": "Невірні дані"}), 401    
-    #user = authenticate(data['email'], data['password'])
-    #if user:
-        #return jsonify({"access_token": user.id, "user": user.name})
-
-#@app.route('/profile')
-#@jwt_required()
-#def profile_user():
-    #return jsonify({"id": current_identity.id, "name": current_identity.name, "email": current_identity.email})
-
-#@app.route('/admin/users')
-#@jwt_required()
-#def admin_users():
-    #user_id = get_jwt_identity()
-    #user = User.query.get(user_id)
-    #if not user.is_admin:
-        #return jsonify({"message": "Недостатньо прав"}), 403
-    #if not current_identity.is_admin:
-        #return jsonify({"message": "Недостатньо прав"}), 403
-    #users = User.query.all()
-    #return jsonify([{"id": u.id, "name": u.name, "email": u.email, "is_admin": u.is_admin} for u in users])
-
-#@app.route('/login', methods=['GET', 'POST']) #Вхід в систему
-#def login_page():
-    #if request.method == 'POST':
-       #email = request.form['email']
-        #password = request.form['password']
-        #user = User.query.filter_by(email=email).first()
-
-        #if user and check_password_hash(user.password, password):
-            #session['user_id'] = user.id
-            #session['user_name'] = user.name
-            #session['user_email'] = user.email
-            #session['is_admin'] = user.is_admin  # Додаємо роль
-            #flash('Ви успішно увійшли!', 'success')
-            #return redirect(url_for('home'))
-        #else:
-            #flash('Невірний email або пароль', 'danger')
-
-    #return render_template('login.html')
-
+@app.route('/api/bookings', methods=['GET'])
+def get_bookings():
+    bookings = Appointment.query.all()
+    result = []
+    for b in bookings:
+        client = Client.query.get(b.client_id)
+        result.append({
+            'name': client.name,
+            'phone': client.phone,
+            'date': b.date,
+            'time': b.time,
+            'service': b.service
+        })
+    return jsonify(result)
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
@@ -297,71 +284,78 @@ def change_password():
 
     return render_template('change_password.html')
 
-#@app.route('/profile') #Особистий кабінет(Профіль)
-#def profile_page():
- #   if 'user_id' not in session:
- #       flash('Будь ласка, увійдіть у систему!', 'danger')
-#        return redirect(url_for('login'))
- #   user = User.query.get(session['user_id'])
-#    return render_template('profile.html', user=user)
+@app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def api_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
 
-#@app.route('/profile')
-#@jwt_required()
-#def profile():
-    #user_id = get_jwt_identity()  # Отримуємо ID користувача з токена
-    #user = User.query.get(user_id)  # Завантажуємо користувача з бази даних
-    #return jsonify({"id": user.id, "name": user.name, "email": user.email})
+    return jsonify({
+        "name": user.name,
+        "email": user.email,
+        "is_admin": user.is_admin,
+        "cars": [
+            {
+                "id": car.id,
+                "name": car.name,
+                "engine": car.engine,
+                "fuel_consumption": car.fuel_consumption,
+                "register": car.register
+            } for car in user.cars
+        ]
+    })
 
 @app.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
-    user_id = get_jwt_identity()  # Отримуємо ID користувача з токена
-    user = User.query.get(user_id)  # Завантажуємо користувача з бази даних
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
     if user:
-        return jsonify({"id": user.id, "name": user.name, "email": user.email})
+        return jsonify({
+            "id": user.id,
+            "name": user.name,
+            "email": user.email
+        })
     return jsonify({"msg": "Користувача не знайдено"}), 404
 
+#----------------------Запис Авто------------------------------
+@app.route('/api/add_car', methods=['GET', 'POST'])
+@jwt_required()
+def api_add_car():
+    user_id = get_jwt_identity()    
+    data = request.get_json()
 
-# Можливість редагувати профіль
-#@app.route('/profile', methods=['GET', 'PUT'])
-#@jwt_required()
-#def profile():
-    #user_id = get_jwt_identity()  # Отримуємо ID користувача з токена
-    #user = User.query.get(user_id)  # Завантажуємо користувача з бази даних
-    #if request.method == 'GET':
-        #return jsonify({"id": user.id, "name": user.name, "email": user.email})
-    #elif request.method == 'PUT':
-        #data = request.get_json()
-        #if 'name' in data:
-            #user.name = data['name']
-        #if 'password' in data:
-           # user.password = generate_password_hash(data['password'], method='pbkdf2:sha256')
-    #db.session.commit()
-    #return jsonify({"message": "Profile updated"})
-    
-    
-    
-    
-    
-    #def update_profile():
-    #if 'user_id' not in session:
-        #return jsonify({"error": "Unauthorized"}), 401
+    try:
+        new_car = Car(
+            name=data['name'],
+            engine=int(data['engine']),
+            fuel_consumption=float(data['fuel_consumption']),
+            register=data.get('register', False),
+            user_id=user_id
+        )
+        db.session.add(new_car)
+        db.session.commit()
+        return jsonify({"msg": "Автомобіль додано успішно!"}), 201
+    except Exception as e:
+        return jsonify({"msg": f"Помилка: {str(e)}"}), 400
 
-    #user = User.query.get(session['user_id'])
-    #data = request.get_json()
-
-    #if 'name' in data:
-        #user.name = data['name']
-    #if 'password' in data:
-       #user.password = generate_password_hash(data['password'], method='pbkdf2:sha256')
-
-
-@app.route('/logout') #Вихід із системи
+@app.route('/add_car', methods=['GET'])
+def add_car():
+    return render_template('add_car.html')    
+    
+@app.route('/logout',  methods=['GET', 'POST']) #Вихід із системи
 def logout():
     session.pop('user_id', None)
     session.pop('user_name', None)
+    response = make_response(jsonify({"msg": "Ви вийшли з акаунту."}))
+    response.delete_cookie("access_token_cookie")
     flash('Ви вийшли з акаунту.', 'success')
-    return redirect(url_for('home'))
+    response.headers['Location'] = url_for('home')  # Перенаправлення на головну
+    response.status_code = 302  # Код перенаправлення
+    #return redirect(url_for('home'))
+    return response
 
 @app.route('/')
 def home():
@@ -370,7 +364,8 @@ def home():
 @app.route('/admin')
 def admin():
     bookings = Booking.query.all()
-    return render_template('admin.html', bookings=bookings)
+    users = User.query.all()
+    return render_template('admin.html', bookings=bookings, users=users)
 
 @app.route('/admin/users')
 def admin_users():
@@ -460,7 +455,7 @@ def booking():
         db.session.add(new_booking)
         db.session.commit()
         flash("Запис успішно створено!", "success")
-        return redirect(url_for('home'))
+        return redirect(url_for('booking'))
     return render_template('booking.html')
 
 @app.route('/delete_booking/<int:booking_id>', methods=['POST'])
@@ -475,22 +470,30 @@ def delete_booking(booking_id):
 
 @app.route('/submit_contact', methods=['POST'])
 def submit_contact():
-    name = request.form.get("name")
-    phone = request.form.get("phone")
-    message = request.form.get("message")
-    email = request.form.get("email")
+    try:
+        name = request.form.get("name")
+        phone = request.form.get("phone")
+        message = request.form.get("message")
+        email = request.form.get("email")
+        # Діагностика: Перевіряємо, чи отримані дані з форми
+        print(f"Отримані дані: ім'я={name}, телефон={phone}, повідомлення={message}")
 
-    if not name or not phone or not message or not email:
-        flash("Всі поля обов’язкові для заповнення!", "error")
-        return redirect(url_for("home"))
+        if not name or not phone or not message:# or not email:
+            flash("Всі поля обов’язкові для заповнення!", "error")
+            return redirect(url_for("home"))
+        
+        # Створення нового запису
+        new_message = ContactMessage(name=name, phone=phone, message=message)
+        db.session.add(new_message)
+        db.session.commit()
+        print("Запис успішно збережено в базу даних!")
+        
+        flash("Дякуємо! Ваша заявка прийнята.", "success")
+    except Exception as e:
+        print(f"Помилка збереження: {e}")
+        send_email(name, phone, message)
 
-    new_message = ContactMessage(name=name, phone=phone, message=message)
-    db.session.add(new_message)
-    db.session.commit()
-
-    send_email(name, phone, message)
-
-    flash("Дякуємо! Ваша заявка прийнята, ми зв’яжемося з вами найближчим часом.", "success")
+        flash("Дякуємо! Ваша заявка прийнята, ми зв’яжемося з вами найближчим часом.", "success")
     return redirect(url_for("home"))
 
 @app.route('/admin/contacts')
@@ -522,7 +525,12 @@ def send_email(name, phone, message):
 # -------------------- ЗАПУСК СЕРВЕРА --------------------
 @app.after_request
 def add_csp_headers(response):
-    response.headers['Content-Security-Policy'] = "default-src 'self'; connect-src 'self' http://127.0.0.1:5000; script-src 'self' 'unsafe-inline';"
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "connect-src 'self' http://127.0.0.1:5000;"
+    )
     return response
 
 if __name__ == '__main__':

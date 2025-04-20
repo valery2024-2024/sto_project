@@ -62,50 +62,123 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email: email, password: password })
+            body: JSON.stringify({ email, password })
+            //body: JSON.stringify({ email: email, password: password })
         });
     
-        let data = await response.json();
-        
+        //let data = await response.json();
+        let contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            let data = await response.json();
         if (response.ok) {
             localStorage.setItem("access_token", data.access_token); // Зберігаємо токен
+            console.log("Отриманий токен:", data.access_token);
             window.location.href = "/profile"; // Перенаправляємо на профіль
         } else {
-            alert("Помилка входу: " + data.message);
+            alert("Помилка входу: " + (data.msg || "Невірні дані!"));
         }
+        } else {
+            let text = await response.text();
+            console.error("❌ Не JSON:", text);
+            alert("Сервер повернув помилку.");
+        }        
     });
     
-    document.addEventListener("DOMContentLoaded", async function() {
+    document.addEventListener("DOMContentLoaded", async function loadProfile() {
         let token = localStorage.getItem("access_token");//Отримуємо токен
     
         if (!token) {
+            console.log("❌ Токен відсутній! Перенаправлення на вхід.");
             window.location.href = "/login"; // Якщо токена немає — перенаправляємо на логін
+            return;
         }
+        
+        console.log("🔧 Токен у заголовку:", "Bearer " + token);
+
+        try {
+            //document.cookie = `access_token_cookie=${token}; path=/;`;
+            let response = await fetch("/api/profile", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,  // ✅ Передаємо токен у заголовку
+                    "Content-Type": "application/json",
+                },
+                credentials: "include"  // Додаємо для передачі кукісів
+            });
+        
     
-        let response = await fetch("/profile", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token // Додаємо токен у заголовок
+            let data = await response.json();
+            console.log("📝 Відповідь сервера:", data);
+    
+            if (response.ok) {
+                document.getElementById("user-name").innerText = data.name;
+                document.getElementById("user-email").innerText = data.email;
+                console.log("✅ Профіль завантажено успішно!");
+                //document.getElementById("profile-info").innerText = `Привіт, ${data.name}!`;
+            } else {
+                console.error("❌ Помилка доступу: " + data.msg);
+                //alert("Помилка доступу до профілю: " + data.msg);
+                window.location.href = "/login"; // Якщо помилка — повертаємо на сторінку входу
             }
-        });
-    
-        let data = await response.json();
-    
-        if (response.ok) {
-            document.getElementById("profile-info").innerText = `Привіт, ${data.name}!`;
-        } else {
-            alert("Помилка доступу до профілю: " + data.msg);
-            window.location.href = "/login"; // Якщо помилка — повертаємо на сторінку входу
+        } catch (error) {
+            console.error("❌ Помилка отримання профілю:", error);
         }
     });
 
-    document.getElementById("logout").addEventListener("click", function(event) {
+    document.getElementById("logout").addEventListener("click", async function(event) {
         event.preventDefault(); // Зупиняємо стандартний перехід по посиланню
-        localStorage.removeItem("access_token"); // Видаляємо токен
-        window.location.href = "/login"; // Переходимо на сторінку входу
+
+        try {
+            await fetch("/logout", { method: "POST" }); // Запит на сервер для видалення сесії
+            localStorage.removeItem("access_token"); // Видаляємо токен
+            window.location.href = "/login"; // Переходимо на сторінку входу
+        } catch (err) {
+            console.error("❌ Помилка при виході:", err);
+        }
     });
+      
+    // Зберігання токена на клієнті
+    //fetch('/login', {
+       // method: 'POST',
+        //headers: {
+            //'Content-Type': 'application/json'
+        //},
+        //body: JSON.stringify({ email: 'newuser@example.com', password: 'password123' })
+    //})
+    //.then(response => response.json())
+    //.then(data => {
+        //console.log("📥 Отримана відповідь з сервера:", data);
+        //if (data.access_token) {
+            //localStorage.setItem('access_token', data.access_token);  // Зберігаємо токен у LocalStorage
+           // console.log("✅ Токен збережено:", localStorage.getItem('access_token'));
+           // alert('Успішний вхід!');
+           // window.location.href = '/profile';  // Перенаправлення на сторінку профілю
+        //} else {
+           // alert('Невірний логін або пароль');
+        //}
+   // })
+    //.catch(err => console.error("❌ Помилка запиту на вхід:", err));
     
-    
+    // Використання токена при доступі до захищених маршрутів
+    fetch('/profile', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+    })
+    .then(response => {
+        console.log("🔧 Статус відповіді:", response.status);
+        response.json();
+    })
+    .then(data => {
+        console.log("🔧 Відповідь сервера (профіль):", data);
+        if (data.id) {
+            alert(`Ласкаво просимо, ${data.name}!`);
+        } else {
+            alert('Помилка доступу!');
+        }
+    })
+    .catch(err => console.error("❌ Помилка отримання профілю:", err));
     
 
     // Видалення запису
@@ -176,6 +249,4 @@ function prevReview() {
 
 // Автоматичне переключення кожні 5 секунд
 setInterval(nextReview, 5000);
-
-
 });

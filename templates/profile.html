@@ -1,47 +1,73 @@
-<form methot="POST">
-  <div class="profile-container">
-      <h1>Привіт, {{ user_name }}!</h1>
-      <p>Email: {{ user_email }}</p>
-      <p>Роль: {% if user.is_admin %} Адміністратор {% else %} Користувач {% endif %}</p>
-      <div class="profile-buttons">
-          <a href="{{ url_for('logout') }}" class="logout-btn">Вийти 🚪</a>
-          <a href="{{ url_for('change_password') }}" class="password-btn">🔑 Змінити пароль</a>
-          <a href="{{ url_for('home') }}" class="home-btn">🏠 На головну</a>
-          <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=2">
-      </div>
-  </div>
-</form>
-<script>
-  async function loadProfile() {
-      let token = localStorage.getItem("access_token");
-      if (!token) {
-          console.log("❌ Токен відсутній! Перенаправлення на вхід.");
-          window.location.href = "/login";
-          return;
-      }
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Профіль користувача</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Привіт, <span id="user-name"></span>!</h1>
+        <p>Email: <span id="user-email"></span></p>
+        <p>Роль: <span id="user-role"></span></p>
 
-      let response = await fetch("/profile", {
-          method: "GET",
-          headers: {
-              "Authorization": "Bearer " + token,  // ✅ Передаємо токен у заголовку
-              "Content-Type": "application/json"
-          }
-      });
+        <div class="profile-buttons">
+            <a href="{{ url_for('logout') }}" class="logout-btn">Вийти</a>
+            <a href="{{ url_for('change_password') }}" class="password-btn">Змінити пароль</a>
+            <a href="{{ url_for('home') }}" class="home-btn">На головну</a>
+            <a href="{{ url_for('add_car') }}" class="car-btn">Додати авто</a>
+        </div>
 
-      let data = await response.json();
+        <hr>
+        <h2>Ваші автомобілі</h2>
+        <ul id="car-list"></ul>
+        <div id="no-cars-msg" style="color: gray;"></div>
+    </div>
 
-      if (response.ok) {
-          document.getElementById("user-name").innerText = data.name;
-          document.getElementById("user-email").innerText = data.email;
-      } else {
-          alert("❌ Помилка доступу: " + (data.msg || "Невідома помилка"));
-          window.location.href = "/login";
-      }
-  }
+    <script>
+        async function loadProfile() {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                console.log("❌ Токен відсутній! Перенаправлення на вхід.");
+                window.location.href = "/login";
+                return;
+            }
 
-  loadProfile();
-</script>
+            const response = await fetch("/api/profile", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                }
+            });
 
-<h2>Профіль користувача</h2>
-<p>Ім'я: <span id="user-name"></span></p>
-<p>Email: <span id="user-email"></span></p>
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById("user-name").innerText = data.name;
+                document.getElementById("user-email").innerText = data.email;
+                document.getElementById("user-role").innerText = data.is_admin ? "Адміністратор" : "Користувач";
+
+                const carList = document.getElementById("car-list");
+                carList.innerHTML = "";
+                const cars = data.cars;
+
+                if (cars.length === 0) {
+                    document.getElementById("no-cars-msg").innerText = "У вас поки немає жодного автомобіля.";
+                } else {
+                    cars.forEach(car => {
+                        const li = document.createElement("li");
+                        li.innerText = `${car.name} — ${car.engine} к.с., ${car.fuel_consumption} л/100км, ${car.register ? "зареєстрований" : "не зареєстрований"}`;
+                        carList.appendChild(li);
+                    });
+                }
+            } else {
+                alert("❌ Помилка доступу: " + (data.msg || "Невідома помилка"));
+                window.location.href = "/login";
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

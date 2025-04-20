@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Профіль користувача</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <div class="profile-info">
+        <h1>Профіль користувача</h1>
+        <p>Ім’я: <span id="user-name">Завантаження...</span></p>
+        <p>Email: <span id="user-email">Завантаження...</span></p>
+        <p>Роль: <span id="user-role">Завантаження...</span></p>
+    </div>
+
+    <hr>
+
+    <h2>Ваші автомобілі</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Марка</th>
+                <th>Двигун</th>
+                <th>Витрати пального</th>
+                <th>Номер авто</th>
+            </tr>
+        </thead>
+        <tbody id="car-list">
+            <tr><td colspan="5">Завантаження...</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        async function loadProfile() {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                alert("❌ Немає токена. Переходимо на /login");
+                return window.location.href = "/login";
+            }
+
+            const response = await fetch("/api/profile", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert("❌ Помилка доступу: " + (data.msg || "невідома"));
+                return window.location.href = "/login";
+            }
+
+            // Дані користувача
+            document.getElementById("user-name").textContent = data.name;
+            document.getElementById("user-email").textContent = data.email;
+            document.getElementById("user-role").textContent = data.is_admin ? "Адміністратор" : "Користувач";
+
+            // Авто
+            const carList = document.getElementById("car-list");
+            carList.innerHTML = "";
+
+            if (data.cars.length === 0) {
+                carList.innerHTML = "<tr><td colspan='5'>Автомобілі відсутні</td></tr>";
+            } else {
+                data.cars.forEach(car => {
+                    const row = `
+                        <tr>
+                            <td>${car.id}</td>
+                            <td>${car.name}</td>
+                            <td>${car.engine}</td>
+                            <td>${car.fuel_consumption}</td>
+                            <td>${car.register}</td>
+                        </tr>
+                    `;
+                    carList.innerHTML += row;
+                });
+            }
+        }
+
+        loadProfile();
+    </script>
+
+</body>
+</html>

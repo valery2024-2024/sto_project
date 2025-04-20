@@ -1,20 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>Add Car</title>
+    <meta charset="UTF-8">
+    <title>Додати автомобіль</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Add New Car</h1>
-    <form method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" required><br>
-        <label>Engine:</label>
-        <input type="number" name="engine" required><br>
-        <label>Price:</label>
-        <input type="number" step="0.01" name="price" required><br>
-        <label>Registered:</label>
-        <input type="checkbox" name="register"><br>
-        <button type="submit">Add</button>
-    </form>
+    <div class="container">
+        <h1>Додати автомобіль</h1>
+
+        <form id="car-form">
+            <label for="name">Марка авто:</label><br>
+            <input type="text" name="name" required><br>
+
+            <label for="engine">Двигун (к.с.):</label><br>
+            <input type="number" name="engine" required><br>
+
+            <label for="fuel_consumption">Витрати пального (л/100 км):</label><br>
+            <input type="number" step="0.1" name="fuel_consumption" required><br>
+
+            <label>
+                <input type="checkbox" name="register"> Зареєстроване авто
+            </label><br><br>
+
+            <button type="submit">Зберегти</button>
+        </form>
+
+        <p><a href="{{ url_for('profile') }}">⬅ Повернутися до профілю</a></p>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById("car-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                alert("❌ Ви не авторизовані.");
+                window.location.href = "/login";
+                return;
+            }
+
+            const form = e.target;
+            const payload = {
+                name: form.name.value,
+                engine: form.engine.value,
+                fuel_consumption: form.fuel_consumption.value,
+                register: form.register.checked
+            };
+
+            const response = await fetch("/api/add_car", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const messageBox = document.getElementById("message");
+
+            if (response.ok) {
+                messageBox.innerHTML = `<p style="color: green;">✅ ${result.msg}</p>`;
+                form.reset();
+            } else {
+                messageBox.innerHTML = `<p style="color: red;">❌ ${result.msg}</p>`;
+            }
+        });
+    </script>
 </body>
 </html>
