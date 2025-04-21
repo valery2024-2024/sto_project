@@ -518,9 +518,9 @@ def send_email(name, phone, message):
                         recipients=[app.config['MAIL_USERNAME']])
         msg.body = f"Ім'я: {name}\nТелефон: {phone}\nПовідомлення: {message}"
         mail.send(msg)
-        print("✅ Email успішно відправлено!")
+        print("Email успішно відправлено!")
     except Exception as e:
-        print(f"❌ Помилка при відправці email: {e}")
+        print(f"Помилка при відправці email: {e}")
 
 # -------------------- ЗАПУСК СЕРВЕРА --------------------
 @app.after_request
