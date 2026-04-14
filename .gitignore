@@ -1,0 +1,20 @@
+# pythpon cesh
+__pycache__/
+*.pyc
+# віртуальне серидовище
+venv/
+# IDE конфігуріція
+.idea
+.vscode/
+# файл середовища
+.env
+# бази даних
+instance/*.db
+instance/*.sqlite
+# міграції кеш
+migrations/__pycache__/
+migrations/versions/__pycache__/
+# логи
+*.log
+# SQL дампи
+*.sql

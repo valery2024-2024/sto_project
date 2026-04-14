@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати запис</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Редагувати запис</h1>
+    <form action="{{ url_for('update_booking', booking_id=booking.id) }}" method="POST">
+        <label>Ім'я:</label>
+        <input type="text" name="name" value="{{ booking.name }}" required>
+
+        <label>Телефон:</label>
+        <input type="text" name="phone" value="{{ booking.phone }}" required>
+
+        <label>Дата:</label>
+        <input type="date" name="date" value="{{ booking.date }}" required>
+
+        <label>Коментар:</label>
+        <textarea name="comment">{{ booking.comment }}</textarea>
+
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ booking.email }}" required>
+
+        <button type="submit">Зберегти зміни</button>
+    </form>
+    <a href="{{ url_for('admin') }}">Назад</a>
+</body>
+</html>
