@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Конфігурація Flask додатку
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "instance", "sto.db")
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"  # База даних SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
