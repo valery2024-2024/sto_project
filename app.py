@@ -56,7 +56,7 @@ mail.init_app(app)
 jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
-app.register_blueprint(main_bp, name="")
+app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
 
 # Функції JWT
@@ -303,9 +303,9 @@ def logout():
     response = make_response(jsonify({"msg": "Ви вийшли з акаунту."}))
     response.delete_cookie("access_token_cookie")
     flash('Ви вийшли з акаунту.', 'success')
-    response.headers['Location'] = url_for('home')  # Перенаправлення на головну
+    response.headers['Location'] = url_for('main.home')  # Перенаправлення на головну
     response.status_code = 302  # Код перенаправлення
-    #return redirect(url_for('home'))
+    #return redirect(url_for('main.home'))
     return response
 
 @app.route('/admin')
@@ -318,7 +318,7 @@ def admin():
 def admin_users():
     if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
         flash('❌ У вас немає доступу!', 'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     users = User.query.all()
     print(users) # Виведе список у терміналі
@@ -350,7 +350,7 @@ def api_delete_user(user_id):
 def delete_user(user_id):
     if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
         flash('❌ У вас немає доступу!', 'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     user = User.query.get_or_404(user_id)
 
