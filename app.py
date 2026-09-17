@@ -15,6 +15,7 @@ from app.models import (
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.routes.main import main_bp
+from app.routes.profile import profile_bp
 import os
 import logging
 
@@ -56,6 +57,7 @@ jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
 app.register_blueprint(main_bp, name="")
+app.register_blueprint(profile_bp)
 
 # Функції JWT
 def authenticate(email, password): # Модель користувача # зв’язок з авто #Додаємо роль
@@ -122,10 +124,6 @@ def register():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-@app.route('/profile_with_cars')
-def profile_with_cars():
-    return render_template('profile_with_cars.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
