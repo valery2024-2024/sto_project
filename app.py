@@ -1,12 +1,10 @@
 from flask import Flask, make_response, render_template, request, redirect, url_for, jsonify, flash, session, send_from_directory
-from flask_login import login_required, current_user, LoginManager
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
-from flask_migrate import Migrate
-from flask_mail import Mail, Message
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
-from flask_cors import CORS
+from flask_mail import Message
+from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from app.extensions import cors, db, jwt, login_manager, mail, migrate
 import os
 import logging
 
@@ -41,12 +39,11 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 
 # Ініціалізація бази даних та пошти
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-mail = Mail(app)
-jwt = JWTManager(app)
-CORS(app, supports_credentials=True)
-login_manager = LoginManager()
+db.init_app(app)
+migrate.init_app(app, db)
+mail.init_app(app)
+jwt.init_app(app)
+cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
 
 # -------------------- МОДЕЛІ БД --------------------
