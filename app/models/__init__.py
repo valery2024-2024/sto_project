@@ -1,4 +1,4 @@
-from .. import db
+from app.extensions import db
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,7 +27,8 @@ class Car(db.Model):
     engine = db.Column(db.Integer, nullable=False)
     fuel_consumption = db.Column(db.Float, nullable=False)
     register = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_car_user_id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('cars', lazy=True))
 
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,3 +50,6 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False) 
+
+    def __str__(self):
+        return f"User(id={self.id}, name={self.name}, email={self.email})"
