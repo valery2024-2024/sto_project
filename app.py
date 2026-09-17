@@ -3,6 +3,15 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from markupsafe import escape
 from flask_mail import Message
+from app.models import (
+    Client,
+    Appointment,
+    Message,
+    Car,
+    Booking,
+    ContactMessage,
+    User,
+)
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.routes.main import main_bp
@@ -47,61 +56,6 @@ jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
 app.register_blueprint(main_bp, name="")
-
-# -------------------- МОДЕЛІ БД --------------------
-class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    phone = db.Column(db.String(20))
-    email = db.Column(db.String(100))
-    appointments = db.relationship('Appointment', backref='client', lazy=True)
-
-class Appointment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
-    date = db.Column(db.String(20))
-    time = db.Column(db.String(20))
-    service = db.Column(db.String(100))
-    comment = db.Column(db.Text)
-
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    email = db.Column(db.String(100))
-    message = db.Column(db.Text)
-
-class Car(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    engine = db.Column(db.Integer, nullable=False)
-    fuel_consumption = db.Column(db.Float, nullable=False)
-    register = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_car_user_id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('cars', lazy=True))
-
-class Booking(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
-    date = db.Column(db.String(20), nullable=False)
-    comment = db.Column(db.Text, nullable=True)
-    email = db.Column(db.String(120), nullable=False)
-
-class ContactMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
-    message = db.Column(db.Text, nullable=False)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False) 
-
-    def __str__(self):
-        return f"User(id={self.id}, name={self.name}, email={self.email})"
 
 # Функції JWT
 def authenticate(email, password): # Модель користувача # зв’язок з авто #Додаємо роль
