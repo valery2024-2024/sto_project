@@ -5,6 +5,7 @@ from markupsafe import escape
 from flask_mail import Message
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
+from app.routes.main import main_bp
 import os
 import logging
 
@@ -45,6 +46,7 @@ mail.init_app(app)
 jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
+app.register_blueprint(main_bp, name="")
 
 # -------------------- МОДЕЛІ БД --------------------
 class Client(db.Model):
@@ -354,10 +356,6 @@ def logout():
     #return redirect(url_for('home'))
     return response
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route('/admin')
 def admin():
     bookings = Booking.query.all()
@@ -413,10 +411,6 @@ def delete_user(user_id):
     db.session.commit()
     flash('✅ Користувач видалений!', 'success')
     return redirect(url_for('admin_users'))
-
-@app.route ('/sto')
-def sto():
-    return render_template('sto.html')
 
 # Сторінка запису на ремонт
 @app.route('/booking/update/<int:booking_id>', methods=['GET', 'POST'])
