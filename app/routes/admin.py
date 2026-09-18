@@ -7,9 +7,21 @@ from app.models import Booking, User
 admin_bp = Blueprint("admin", __name__)
 
 
+def get_current_admin():
+    if 'user_id' not in session:
+        return None
+
+    user = User.query.get(session['user_id'])
+
+    if not user or not user.is_admin:
+        return None
+
+    return user
+
+
 @admin_bp.route("/admin")
 def admin():
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+    if not get_current_admin():
         flash('❌ У вас немає доступу!', 'danger')
         return redirect(url_for('main.home'))
 
@@ -20,7 +32,7 @@ def admin():
 
 @admin_bp.route("/admin/users")
 def admin_users():
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+    if not get_current_admin():
         flash('❌ У вас немає доступу!', 'danger')
         return redirect(url_for('main.home'))
 
@@ -31,7 +43,7 @@ def admin_users():
 
 @admin_bp.route("/api/admin/users", methods=["GET"])
 def api_admin_users():
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+    if not get_current_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     users = User.query.all()
@@ -40,7 +52,7 @@ def api_admin_users():
 
 @admin_bp.route("/admin/users/<int:user_id>", methods=["DELETE"])
 def api_delete_user(user_id):
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+    if not get_current_admin():
         return jsonify({"error": "Unauthorized"}), 403
 
     user = User.query.get_or_404(user_id)
@@ -55,7 +67,7 @@ def api_delete_user(user_id):
 
 @admin_bp.route("/admin/users/delete/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+    if not get_current_admin():
         flash('❌ У вас немає доступу!', 'danger')
         return redirect(url_for('main.home'))
 
