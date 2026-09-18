@@ -1,18 +1,7 @@
-from flask import Flask, make_response, render_template, request, redirect, url_for, jsonify, flash, session, send_from_directory
-from flask_login import login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from markupsafe import escape
-from flask_mail import Message
+from flask import Flask
 from app.models import (
-    Client,
-    Appointment,
-    Message,
-    Car,
-    Booking,
-    ContactMessage,
     User,
 )
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.routes.admin import admin_bp
 from app.routes.auth import auth_bp
