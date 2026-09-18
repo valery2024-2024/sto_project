@@ -9,6 +9,10 @@ admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route("/admin")
 def admin():
+    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
+        flash('❌ У вас немає доступу!', 'danger')
+        return redirect(url_for('main.home'))
+
     bookings = Booking.query.all()
     users = User.query.all()
     return render_template('admin.html', bookings=bookings, users=users)
