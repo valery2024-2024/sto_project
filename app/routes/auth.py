@@ -72,6 +72,8 @@ def login():
         return jsonify({"msg": "Невірний пароль"}), 401
 
     try:
+        session['user_id'] = user.id
+        session['user_name'] = user.name
         access_token = create_access_token(identity=str(user.id))
         print(f"Токен створено: {access_token}")
         response = make_response(jsonify({"access_token": access_token}))
