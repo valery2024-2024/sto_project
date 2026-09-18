@@ -75,10 +75,6 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    return send_from_directory(app.static_folder, filename)
-
 #----------------------Запис Авто------------------------------
 # Сторінка запису на ремонт
 # -------------------- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ --------------------
