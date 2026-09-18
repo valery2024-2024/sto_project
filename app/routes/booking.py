@@ -62,7 +62,7 @@ def update_booking(booking_id):
 
         db.session.commit()
         flash("Запис успішно оновлено!", "success")
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin.admin'))
 
     return render_template('update_booking.html', booking=booking)
 
@@ -90,4 +90,4 @@ def delete_booking(booking_id):
     db.session.delete(booking)
     db.session.commit()
     flash("Запис успішно видалено!", "success")
-    return redirect(url_for('admin'))
+    return redirect(url_for('admin.admin'))

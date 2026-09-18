@@ -14,6 +14,7 @@ from app.models import (
 )
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
+from app.routes.admin import admin_bp
 from app.routes.auth import auth_bp
 from app.routes.booking import booking_bp
 from app.routes.cars import cars_bp
@@ -60,6 +61,7 @@ mail.init_app(app)
 jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
+app.register_blueprint(admin_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(cars_bp)
@@ -109,62 +111,6 @@ def static_files(filename):
     return send_from_directory(app.static_folder, filename)
 
 #----------------------Запис Авто------------------------------
-@app.route('/admin')
-def admin():
-    bookings = Booking.query.all()
-    users = User.query.all()
-    return render_template('admin.html', bookings=bookings, users=users)
-
-@app.route('/admin/users')
-def admin_users():
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
-        flash('❌ У вас немає доступу!', 'danger')
-        return redirect(url_for('main.home'))
-
-    users = User.query.all()
-    print(users) # Виведе список у терміналі
-    return render_template('admin_users.html', users=users)
-
-@app.route('/api/admin/users', methods=['GET'])
-def api_admin_users():
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    users = User.query.all()
-    return jsonify([{"id": user.id, "name": user.name, "email": user.email, "is_admin": user.is_admin} for user in users])
-
-@app.route('/admin/users/<int:user_id>', methods=['DELETE'])
-def api_delete_user(user_id):
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    user = User.query.get_or_404(user_id)
-
-    if user.id == session['us er_id']:
-        return jsonify({"error": "Cannot delete yourself"}), 400
-
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({"message": "User deleted"})
-
-@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
-def delete_user(user_id):
-    if 'user_id' not in session or not User.query.get(session['user_id']).is_admin:
-        flash('❌ У вас немає доступу!', 'danger')
-        return redirect(url_for('main.home'))
-
-    user = User.query.get_or_404(user_id)
-
-    # Захист від видалення себе
-    if user.id == session['user_id']:
-        flash('❌ Ви не можете видалити свій обліковий запис!', 'danger')
-        return redirect(url_for('admin_users'))
-
-    db.session.delete(user)
-    db.session.commit()
-    flash('✅ Користувач видалений!', 'success')
-    return redirect(url_for('admin_users'))
-
 # Сторінка запису на ремонт
 # -------------------- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ --------------------
 
