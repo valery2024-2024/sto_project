@@ -15,6 +15,7 @@ from app.models import (
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.routes.auth import auth_bp
+from app.routes.booking import booking_bp
 from app.routes.cars import cars_bp
 from app.routes.main import main_bp
 from app.routes.profile import profile_bp
@@ -59,6 +60,7 @@ jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(booking_bp)
 app.register_blueprint(cars_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
@@ -100,24 +102,6 @@ def protected():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/api/add_appointment', methods=['POST'])
-def add_appointment():
-    data = request.json
-    client = Client(name=data['name'], phone=data['phone'], email=data.get('email'))
-    db.session.add(client)
-    db.session.commit()
-    
-    appointment = Appointment(
-        client_id=client.id,
-        date=data['date'],
-        time=data['time'],
-        service=data['service'],
-        comment=data.get('comment', '')
-    )
-    db.session.add(appointment)
-    db.session.commit()
-    return jsonify({'message': 'Запис успішно додано'}), 201
-
 @app.route('/api/contact_message', methods=['POST'])
 def contact_message():
     data = request.json
@@ -125,21 +109,6 @@ def contact_message():
     db.session.add(message)
     db.session.commit()
     return jsonify({'message': 'Повідомлення надіслано'}), 200
-
-@app.route('/api/bookings', methods=['GET'])
-def get_bookings():
-    bookings = Appointment.query.all()
-    result = []
-    for b in bookings:
-        client = Client.query.get(b.client_id)
-        result.append({
-            'name': client.name,
-            'phone': client.phone,
-            'date': b.date,
-            'time': b.time,
-            'service': b.service
-        })
-    return jsonify(result)
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
@@ -203,50 +172,6 @@ def delete_user(user_id):
     return redirect(url_for('admin_users'))
 
 # Сторінка запису на ремонт
-@app.route('/booking/update/<int:booking_id>', methods=['GET', 'POST'])
-def update_booking(booking_id):
-    booking = Booking.query.get_or_404(booking_id)
-    if request.method == 'POST':
-        booking.name = request.form['name']
-        booking.phone = request.form['phone']
-        booking.date = request.form['date']
-        booking.comment = request.form['comment']
-        booking.email = request.form['email']
-
-        db.session.commit()
-        flash("Запис успішно оновлено!", "success")
-        return redirect(url_for('admin'))
-
-    return render_template('update_booking.html', booking=booking)
-
-
-
-# -------------------- БРОНЮВАННЯ --------------------
-
-@app.route('/booking', methods=['GET', 'POST'])
-def booking():
-    if request.method == 'POST':
-        new_booking = Booking(
-            name=request.form['name'],
-            phone=request.form['phone'],
-            date=request.form['date'],
-            comment=request.form.get('comment', ''),
-            email=request.form['email']
-        )
-        db.session.add(new_booking)
-        db.session.commit()
-        flash("Запис успішно створено!", "success")
-        return redirect(url_for('booking'))
-    return render_template('booking.html')
-
-@app.route('/delete_booking/<int:booking_id>', methods=['POST'])
-def delete_booking(booking_id):
-    booking = Booking.query.get_or_404(booking_id)
-    db.session.delete(booking)
-    db.session.commit()
-    flash("Запис успішно видалено!", "success")
-    return redirect(url_for('admin'))
-
 # -------------------- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ --------------------
 
 @app.route('/submit_contact', methods=['POST'])
