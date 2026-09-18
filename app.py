@@ -24,9 +24,6 @@ from app.routes.profile import profile_bp
 import os
 import logging
 
-def safe_str_cmp(a, b):
-    return a == b
-
 logging.basicConfig(level=logging.DEBUG)
 # Конфігурація Flask додатку
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -69,37 +66,9 @@ app.register_blueprint(contact_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
 
-# Функції JWT
-def authenticate(email, password): # Модель користувача # зв’язок з авто #Додаємо роль
-    user = User.query.filter_by(email=email).first()
-    if user and check_password_hash(user.password, password):
-        return user
-
-def identity(payload):
-    user_id = payload['identity']
-    return User.query.get(user_id)
-
-@app.route('/get_token/<string:email>', methods=['GET'])
-def get_token(email):
-    user = User.query.filter_by(email=email).first()
-    if user:
-        token = create_access_token(identity=user.id)
-        return jsonify(access_token=token)
-    return jsonify({"message": "Користувача не знайдено"}), 404
-
-
-
 # Створення таблиць у БД
 with app.app_context():
     db.create_all()
-
- 
-@app.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-       current_user_id = get_jwt_identity()
-       user = User.query.get(current_user_id)
-       return jsonify({"id": user.id, "name": user.name, "email": user.email})
 
 # Де User — моя модель користувача
 @login_manager.user_loader
