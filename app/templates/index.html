@@ -251,7 +251,7 @@
             <h2>Залишити відгук</h2>
             <p>Дякуємо за ваш відгук, він для нас дуже важливий!</p>
             
-            <form action="{{ url_for('submit_contact') }}" method="POST">
+            <form action="{{ url_for('contact.submit_contact') }}" method="POST">
                 <label for="name">Ваше ім'я</label>
                 <input type="text" id="name" name="name" required>
         
