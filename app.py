@@ -15,6 +15,7 @@ from app.models import (
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.routes.auth import auth_bp
+from app.routes.cars import cars_bp
 from app.routes.main import main_bp
 from app.routes.profile import profile_bp
 import os
@@ -58,6 +59,7 @@ jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(cars_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
 
@@ -144,30 +146,6 @@ def static_files(filename):
     return send_from_directory(app.static_folder, filename)
 
 #----------------------Запис Авто------------------------------
-@app.route('/api/add_car', methods=['GET', 'POST'])
-@jwt_required()
-def api_add_car():
-    user_id = get_jwt_identity()    
-    data = request.get_json()
-
-    try:
-        new_car = Car(
-            name=data['name'],
-            engine=int(data['engine']),
-            fuel_consumption=float(data['fuel_consumption']),
-            register=data.get('register', False),
-            user_id=user_id
-        )
-        db.session.add(new_car)
-        db.session.commit()
-        return jsonify({"msg": "Автомобіль додано успішно!"}), 201
-    except Exception as e:
-        return jsonify({"msg": f"Помилка: {str(e)}"}), 400
-
-@app.route('/add_car', methods=['GET'])
-def add_car():
-    return render_template('add_car.html')    
-    
 @app.route('/admin')
 def admin():
     bookings = Booking.query.all()
