@@ -47,7 +47,7 @@
             <a href="#contact">Контакти</a>
             <a href="/booking" class="button">Онлайн запис</a>
         {% if 'user_id' in session %}
-            <a href="{{ url_for('profile') }}">Профіль</a>
+            <a href="{{ url_for('profile.profile') }}">Профіль</a>
             <a href="{{ url_for('auth.logout') }}">Вийти</a>
         {% else %}
             <a href="{{ url_for('auth.login') }}">Вхід</a>

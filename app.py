@@ -143,42 +143,6 @@ def get_bookings():
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)
 
-@app.route('/api/profile', methods=['GET'])
-@jwt_required()
-def api_profile():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    
-
-    return jsonify({
-        "name": user.name,
-        "email": user.email,
-        "is_admin": user.is_admin,
-        "cars": [
-            {
-                "id": car.id,
-                "name": car.name,
-                "engine": car.engine,
-                "fuel_consumption": car.fuel_consumption,
-                "register": car.register
-            } for car in user.cars
-        ]
-    })
-
-@app.route('/profile', methods=['GET'])
-@jwt_required()
-def profile():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if user:
-        return jsonify({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email
-        })
-    return jsonify({"msg": "Користувача не знайдено"}), 404
-
 #----------------------Запис Авто------------------------------
 @app.route('/api/add_car', methods=['GET', 'POST'])
 @jwt_required()

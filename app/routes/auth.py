@@ -122,6 +122,6 @@ def change_password():
         user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
         db.session.commit()
         flash('✅ Пароль успішно змінено!', 'success')
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile.profile'))
 
     return render_template('change_password.html')
