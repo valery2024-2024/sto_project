@@ -41,7 +41,7 @@ def api_delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    if user.id == session['us er_id']:
+    if user.id == session['user_id']:
         return jsonify({"error": "Cannot delete yourself"}), 400
 
     db.session.delete(user)
