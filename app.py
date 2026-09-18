@@ -14,6 +14,7 @@ from app.models import (
 )
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
+from app.routes.auth import auth_bp
 from app.routes.main import main_bp
 from app.routes.profile import profile_bp
 import os
@@ -56,6 +57,7 @@ mail.init_app(app)
 jwt.init_app(app)
 cors.init_app(app, supports_credentials=True)
 login_manager.init_app(app)
+app.register_blueprint(auth_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
 
@@ -91,73 +93,10 @@ def protected():
        user = User.query.get(current_user_id)
        return jsonify({"id": user.id, "name": user.name, "email": user.email})
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        if request.is_json:  # Якщо це API-запит
-            data = request.get_json()
-        else: 
-            data = request.form
-        name = data.get('name')
-        email = data.get('email')
-        password = data.get('password')
-        if not name or not email or not password:
-            flash("Всі поля є обов'язковими!", "danger")
-            return redirect(url_for('register'))    
-
-
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash('Користувач з таким email вже існує!', 'danger')
-            return redirect(url_for('register'))
-
-        is_first_user = User.query.count() == 0
-        new_user = User(name=name, email=email, password=hashed_password, is_admin=is_first_user)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Реєстрація успішна! Тепер увійдіть', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html')
-
 # Де User — моя модель користувача
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template("login.html")
-
-    try:
-        data = request.get_json(force=True)
-        email = data.get('email')
-        password = data.get('password')
-        print(f"Отримано email: {email}, пароль: {password}")
-    except Exception as e:
-        print(f"JSON parsing error: {e}")
-        return jsonify({"msg": "Invalid JSON"}), 400
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        print("Користувача не знайдено")
-        return jsonify({"msg": "Користувача не знайдено"}), 404
-
-    if not check_password_hash(user.password, password):
-        print("Пароль невірний")
-        return jsonify({"msg": "Невірний пароль"}), 401
-
-    try:
-        access_token = create_access_token(identity=str(user.id))
-        print(f"Токен створено: {access_token}")
-        response = make_response(jsonify({"access_token": access_token}))
-        response.set_cookie("access_token_cookie", access_token, httponly=True)
-        return response, 200
-    except Exception as e:
-        print(f"Помилка створення токена: {e}")
-        return jsonify({"msg": "Token generation error"}), 500
-
 
 @app.route('/api/add_appointment', methods=['POST'])
 def add_appointment():
@@ -203,37 +142,6 @@ def get_bookings():
 @app.route('/static/<path:filename>')
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)
-
-@app.route('/change_password', methods=['GET', 'POST']) #Зміна пароля
-def change_password():
-    if 'user_id' not in session:
-        flash('Будь ласка, увійдіть у систему!', 'danger')
-        return redirect(url_for('login'))
-
-    user = User.query.get(session['user_id'])
-
-    if request.method == 'POST':
-        current_password = request.form['current_password']
-        new_password = request.form['new_password']
-        confirm_password = request.form['confirm_password']
-
-        # Перевірка старого пароля
-        if not check_password_hash(user.password, current_password):
-            flash('❌ Невірний поточний пароль!', 'danger')
-            return redirect(url_for('change_password'))
-
-        # Перевірка збігу нового пароля
-        if new_password != confirm_password:
-            flash('❌ Нові паролі не співпадають!', 'danger')
-            return redirect(url_for('change_password'))
-
-        # Оновлення пароля
-        user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
-        db.session.commit()
-        flash('✅ Пароль успішно змінено!', 'success')
-        return redirect(url_for('profile'))
-
-    return render_template('change_password.html')
 
 @app.route('/api/profile', methods=['GET'])
 @jwt_required()
@@ -296,18 +204,6 @@ def api_add_car():
 def add_car():
     return render_template('add_car.html')    
     
-@app.route('/logout',  methods=['GET', 'POST']) #Вихід із системи
-def logout():
-    session.pop('user_id', None)
-    session.pop('user_name', None)
-    response = make_response(jsonify({"msg": "Ви вийшли з акаунту."}))
-    response.delete_cookie("access_token_cookie")
-    flash('Ви вийшли з акаунту.', 'success')
-    response.headers['Location'] = url_for('main.home')  # Перенаправлення на головну
-    response.status_code = 302  # Код перенаправлення
-    #return redirect(url_for('main.home'))
-    return response
-
 @app.route('/admin')
 def admin():
     bookings = Booking.query.all()

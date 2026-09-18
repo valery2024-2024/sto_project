@@ -12,8 +12,8 @@
         <p>Роль: <span id="user-role"></span></p>
 
         <div class="profile-buttons">
-            <a href="{{ url_for('logout') }}" class="logout-btn">Вийти</a>
-            <a href="{{ url_for('change_password') }}" class="password-btn">Змінити пароль</a>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Вийти</a>
+            <a href="{{ url_for('auth.change_password') }}" class="password-btn">Змінити пароль</a>
             <a href="{{ url_for('main.home') }}" class="home-btn">На головну</a>
             <a href="{{ url_for('add_car') }}" class="car-btn">Додати авто</a>
         </div>
