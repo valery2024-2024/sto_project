@@ -21,7 +21,6 @@ app = Flask(__name__, template_folder="app/templates", static_folder="app/static
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"  # База даних SQLite
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
-app.config['JWT_SECRET_KEY'] = 'super-secret-key'
 
 # Налаштування Flask-Mail (БЕЗ `MAIL_PASSWORD` в коді)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
