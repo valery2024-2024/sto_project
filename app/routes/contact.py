@@ -49,6 +49,7 @@ def submit_contact():
         flash("Дякуємо! Ваша заявка прийнята.", "success")
     except Exception as e:
         print(f"Помилка збереження: {e}")
+        db.session.rollback()
         send_email(name, phone, message)
 
         flash("Дякуємо! Ваша заявка прийнята, ми зв’яжемося з вами найближчим часом.", "success")
