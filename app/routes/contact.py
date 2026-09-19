@@ -8,6 +8,7 @@ from flask import (
     request,
     url_for,
 )
+from flask_mail import Message as MailMessage
 
 from app.extensions import db, mail
 from app.models import ContactMessage, Message
@@ -71,7 +72,7 @@ def delete_contact(contact_id):
 
 def send_email(name, phone, message):
     try:
-        msg = Message("Нова заявка на СТО",
+        msg = MailMessage("Нова заявка на СТО",
                         recipients=[current_app.config['MAIL_USERNAME']])
         msg.body = f"Ім'я: {name}\nТелефон: {phone}\nПовідомлення: {message}"
         mail.send(msg)
