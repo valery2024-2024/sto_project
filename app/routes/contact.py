@@ -28,31 +28,38 @@ def contact_message():
 
 @contact_bp.route("/submit_contact", methods=["POST"])
 def submit_contact():
+    name = request.form.get("name")
+    phone = request.form.get("phone")
+    message = request.form.get("message")
+    email = request.form.get("email")
+    # Діагностика: Перевіряємо, чи отримані дані з форми
+    print(f"Отримані дані: ім'я={name}, телефон={phone}, повідомлення={message}")
+
+    if not name or not phone or not message:# or not email:
+        flash("Всі поля обов’язкові для заповнення!", "error")
+        return redirect(url_for("main.home"))
+
     try:
-        name = request.form.get("name")
-        phone = request.form.get("phone")
-        message = request.form.get("message")
-        email = request.form.get("email")
-        # Діагностика: Перевіряємо, чи отримані дані з форми
-        print(f"Отримані дані: ім'я={name}, телефон={phone}, повідомлення={message}")
-
-        if not name or not phone or not message:# or not email:
-            flash("Всі поля обов’язкові для заповнення!", "error")
-            return redirect(url_for("main.home"))
-
         # Створення нового запису
         new_message = ContactMessage(name=name, phone=phone, message=message)
         db.session.add(new_message)
         db.session.commit()
         print("Запис успішно збережено в базу даних!")
-
-        flash("Дякуємо! Ваша заявка прийнята.", "success")
     except Exception as e:
         print(f"Помилка збереження: {e}")
         db.session.rollback()
-        send_email(name, phone, message)
+        flash("Не вдалося зберегти заявку. Спробуйте ще раз.", "error")
+        return redirect(url_for("main.home"))
 
-        flash("Дякуємо! Ваша заявка прийнята, ми зв’яжемося з вами найближчим часом.", "success")
+    email_sent = send_email(name, phone, message)
+
+    if email_sent:
+        flash("Дякуємо! Ваша заявка прийнята.", "success")
+    else:
+        flash(
+            "Дякуємо! Ваша заявка прийнята. Ми зв’яжемося з вами найближчим часом.",
+            "success",
+        )
     return redirect(url_for("main.home"))
 
 
@@ -78,5 +85,7 @@ def send_email(name, phone, message):
         msg.body = f"Ім'я: {name}\nТелефон: {phone}\nПовідомлення: {message}"
         mail.send(msg)
         print("Email успішно відправлено!")
+        return True
     except Exception as e:
         print(f"Помилка при відправці email: {e}")
+        return False
