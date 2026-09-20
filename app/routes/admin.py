@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, session, url_for
+from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, session, url_for
 
 from app.extensions import db
 from app.models import Booking, ContactMessage, User
@@ -78,7 +78,14 @@ def delete_user(user_id):
         flash('❌ Ви не можете видалити свій обліковий запис!', 'danger')
         return redirect(url_for('admin.admin_users'))
 
-    db.session.delete(user)
-    db.session.commit()
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception:
+        current_app.logger.exception("Помилка видалення користувача")
+        db.session.rollback()
+        flash('❌ Не вдалося видалити користувача. Спробуйте ще раз.', 'danger')
+        return redirect(url_for('admin.admin_users'))
+
     flash('✅ Користувач видалений!', 'success')
     return redirect(url_for('admin.admin_users'))
