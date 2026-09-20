@@ -96,8 +96,14 @@ def delete_contact(contact_id):
         return redirect(url_for("main.home"))
 
     contact = ContactMessage.query.get_or_404(contact_id)
-    db.session.delete(contact)
-    db.session.commit()
+    try:
+        db.session.delete(contact)
+        db.session.commit()
+    except Exception as e:
+        print(f"Помилка видалення повідомлення: {e}")
+        db.session.rollback()
+        flash("Не вдалося видалити повідомлення. Спробуйте ще раз.", "error")
+        return redirect(url_for("contact.admin_contacts"))
     flash("Повідомлення успішно видалено!", "success")
     return redirect(url_for('contact.admin_contacts'))
 
