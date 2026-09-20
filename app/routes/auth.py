@@ -138,6 +138,6 @@ def change_password():
             flash('Не вдалося змінити пароль. Спробуйте ще раз.', 'danger')
             return redirect(url_for('auth.change_password'))
         flash('✅ Пароль успішно змінено!', 'success')
-        return redirect(url_for('profile.profile'))
+        return redirect(url_for('profile.profile_with_cars'))
 
     return render_template('change_password.html')
