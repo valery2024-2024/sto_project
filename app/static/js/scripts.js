@@ -104,28 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
       
-    // Зберігання токена на клієнті
-    //fetch('/login', {
-       // method: 'POST',
-        //headers: {
-            //'Content-Type': 'application/json'
-        //},
-        //body: JSON.stringify({ email: 'newuser@example.com', password: 'password123' })
-    //})
-    //.then(response => response.json())
-    //.then(data => {
-        //console.log("📥 Отримана відповідь з сервера:", data);
-        //if (data.access_token) {
-            //localStorage.setItem('access_token', data.access_token);  // Зберігаємо токен у LocalStorage
-           // console.log("✅ Токен збережено:", localStorage.getItem('access_token'));
-           // alert('Успішний вхід!');
-           // window.location.href = '/profile';  // Перенаправлення на сторінку профілю
-        //} else {
-           // alert('Невірний логін або пароль');
-        //}
-   // })
-    //.catch(err => console.error("❌ Помилка запиту на вхід:", err));
-    
     // Видалення запису
     setTimeout(() => {
         const deleteButtons = document.querySelectorAll(".delete-btn");
