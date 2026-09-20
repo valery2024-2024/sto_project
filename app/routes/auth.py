@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    current_app,
     flash,
     jsonify,
     make_response,
@@ -57,30 +58,26 @@ def login():
         data = request.get_json(force=True)
         email = data.get('email')
         password = data.get('password')
-        print(f"Отримано email: {email}, пароль: {password}")
-    except Exception as e:
-        print(f"JSON parsing error: {e}")
+    except Exception:
+        current_app.logger.exception("Invalid login JSON")
         return jsonify({"msg": "Invalid JSON"}), 400
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        print("Користувача не знайдено")
         return jsonify({"msg": "Користувача не знайдено"}), 404
 
     if not check_password_hash(user.password, password):
-        print("Пароль невірний")
         return jsonify({"msg": "Невірний пароль"}), 401
 
     try:
         session['user_id'] = user.id
         session['user_name'] = user.name
         access_token = create_access_token(identity=str(user.id))
-        print(f"Токен створено: {access_token}")
         response = make_response(jsonify({"access_token": access_token}))
         response.set_cookie("access_token_cookie", access_token, httponly=True)
         return response, 200
-    except Exception as e:
-        print(f"Помилка створення токена: {e}")
+    except Exception:
+        current_app.logger.exception("Token generation error")
         return jsonify({"msg": "Token generation error"}), 500
 
 
