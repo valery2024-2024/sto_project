@@ -129,8 +129,14 @@ def change_password():
             return redirect(url_for('auth.change_password'))
 
         # Оновлення пароля
-        user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
-        db.session.commit()
+        try:
+            user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
+            db.session.commit()
+        except Exception:
+            current_app.logger.exception("Помилка зміни пароля")
+            db.session.rollback()
+            flash('Не вдалося змінити пароль. Спробуйте ще раз.', 'danger')
+            return redirect(url_for('auth.change_password'))
         flash('✅ Пароль успішно змінено!', 'success')
         return redirect(url_for('profile.profile'))
 
