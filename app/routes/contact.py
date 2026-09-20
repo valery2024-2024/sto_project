@@ -32,8 +32,8 @@ def submit_contact():
         db.session.add(new_message)
         db.session.commit()
         print("Запис успішно збережено в базу даних!")
-    except Exception as e:
-        print(f"Помилка збереження: {e}")
+    except Exception:
+        current_app.logger.exception("Помилка збереження заявки")
         db.session.rollback()
         flash("Не вдалося зберегти заявку. Спробуйте ще раз.", "error")
         return redirect(url_for("main.home"))
@@ -60,8 +60,8 @@ def delete_contact(contact_id):
     try:
         db.session.delete(contact)
         db.session.commit()
-    except Exception as e:
-        print(f"Помилка видалення повідомлення: {e}")
+    except Exception:
+        current_app.logger.exception("Помилка видалення повідомлення")
         db.session.rollback()
         flash("Не вдалося видалити повідомлення. Спробуйте ще раз.", "error")
         return redirect(url_for("admin.admin"))
@@ -77,6 +77,6 @@ def send_email(name, phone, message):
         mail.send(msg)
         print("Email успішно відправлено!")
         return True
-    except Exception as e:
-        print(f"Помилка при відправці email: {e}")
+    except Exception:
+        current_app.logger.exception("Помилка при відправці email")
         return False
