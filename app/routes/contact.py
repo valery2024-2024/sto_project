@@ -2,7 +2,6 @@ from flask import (
     Blueprint,
     current_app,
     flash,
-    jsonify,
     redirect,
     request,
     url_for,
@@ -10,36 +9,11 @@ from flask import (
 from flask_mail import Message as MailMessage
 
 from app.extensions import db, mail
-from app.models import ContactMessage, Message
+from app.models import ContactMessage
 from app.routes.admin import get_current_admin
 
 
 contact_bp = Blueprint("contact", __name__)
-
-
-@contact_bp.route("/api/contact_message", methods=["POST"])
-def contact_message():
-    data = request.get_json(silent=True)
-
-    if not data:
-        return jsonify({"error": "Invalid JSON"}), 400
-
-    name = data.get("name")
-    email = data.get("email")
-    message_text = data.get("message")
-
-    if not name or not email or not message_text:
-        return jsonify({"error": "Missing required fields"}), 400
-
-    try:
-        message = Message(name=name, email=email, message=message_text)
-        db.session.add(message)
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        return jsonify({"error": "Failed to save message"}), 500
-
-    return jsonify({"message": "Повідомлення надіслано"}), 200
 
 
 @contact_bp.route("/submit_contact", methods=["POST"])
