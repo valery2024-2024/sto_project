@@ -4,7 +4,6 @@ from flask import (
     flash,
     jsonify,
     redirect,
-    render_template,
     request,
     url_for,
 )
@@ -79,16 +78,6 @@ def submit_contact():
     return redirect(url_for("main.home"))
 
 
-@contact_bp.route("/admin/contacts")
-def admin_contacts():
-    if not get_current_admin():
-        flash("❌ У вас немає доступу!", "danger")
-        return redirect(url_for("main.home"))
-
-    contacts = ContactMessage.query.all()
-    return render_template('admin_contacts.html', contacts=contacts)
-
-
 @contact_bp.route("/admin/contacts/delete/<int:contact_id>", methods=["POST"])
 def delete_contact(contact_id):
     if not get_current_admin():
@@ -103,9 +92,9 @@ def delete_contact(contact_id):
         print(f"Помилка видалення повідомлення: {e}")
         db.session.rollback()
         flash("Не вдалося видалити повідомлення. Спробуйте ще раз.", "error")
-        return redirect(url_for("contact.admin_contacts"))
+        return redirect(url_for("admin.admin"))
     flash("Повідомлення успішно видалено!", "success")
-    return redirect(url_for('contact.admin_contacts'))
+    return redirect(url_for('admin.admin'))
 
 
 def send_email(name, phone, message):
