@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, jsonify, redirect, render_template, session, url_for
 
 from app.extensions import db
-from app.models import Booking, User
+from app.models import Booking, ContactMessage, User
 
 
 admin_bp = Blueprint("admin", __name__)
@@ -27,7 +27,8 @@ def admin():
 
     bookings = Booking.query.all()
     users = User.query.all()
-    return render_template('admin.html', bookings=bookings, users=users)
+    contacts = ContactMessage.query.all()
+    return render_template('admin.html', bookings=bookings, users=users, contacts=contacts)
 
 
 @admin_bp.route("/admin/users")

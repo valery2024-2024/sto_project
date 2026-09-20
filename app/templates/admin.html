@@ -67,8 +67,39 @@
            </tr>
            {% endfor %}
        </tbody>
-   </table>
-   </div>
+    </table>
+       <h2>Заявки клієнтів</h2>
+       {% if contacts %}
+       <table>
+           <thead>
+               <tr>
+                   <th>ID</th>
+                   <th>Ім'я</th>
+                   <th>Телефон</th>
+                   <th>Повідомлення</th>
+                   <th>Дії</th>
+               </tr>
+           </thead>
+           <tbody>
+               {% for contact in contacts %}
+               <tr>
+                   <td>{{ contact.id }}</td>
+                   <td>{{ contact.name }}</td>
+                   <td>{{ contact.phone }}</td>
+                   <td>{{ contact.message }}</td>
+                   <td>
+                       <form action="{{ url_for('contact.delete_contact', contact_id=contact.id) }}" method="POST">
+                           <button type="submit" class="delete-btn">Видалити</button>
+                       </form>
+                   </td>
+               </tr>
+               {% endfor %}
+           </tbody>
+       </table>
+       {% else %}
+       <p>Заявок поки немає.</p>
+       {% endif %}
+    </div>
    <!-- Підключення JavaScript -->
    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
   </body>
