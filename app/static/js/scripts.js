@@ -51,39 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.getElementById("login-form").addEventListener("submit", async function(event) {
-        event.preventDefault();
-    
-        let email = document.getElementById("email").value;
-        let password = document.getElementById("password").value;
-    
-        let response = await fetch("/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password })
-            //body: JSON.stringify({ email: email, password: password })
-        });
-    
-        //let data = await response.json();
-        let contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            let data = await response.json();
-        if (response.ok) {
-            localStorage.setItem("access_token", data.access_token); // Зберігаємо токен
-            console.log("Отриманий токен:", data.access_token);
-            window.location.href = "/profile"; // Перенаправляємо на профіль
-        } else {
-            alert("Помилка входу: " + (data.msg || "Невірні дані!"));
-        }
-        } else {
-            let text = await response.text();
-            console.error("❌ Не JSON:", text);
-            alert("Сервер повернув помилку.");
-        }        
-    });
-    
     document.addEventListener("DOMContentLoaded", async function loadProfile() {
         let token = localStorage.getItem("access_token");//Отримуємо токен
     
