@@ -92,18 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById("logout").addEventListener("click", async function(event) {
-        event.preventDefault(); // Зупиняємо стандартний перехід по посиланню
-
-        try {
-            await fetch("/logout", { method: "POST" }); // Запит на сервер для видалення сесії
-            localStorage.removeItem("access_token"); // Видаляємо токен
-            window.location.href = "/login"; // Переходимо на сторінку входу
-        } catch (err) {
-            console.error("❌ Помилка при виході:", err);
-        }
-    });
-      
     // Видалення запису
     setTimeout(() => {
         const deleteButtons = document.querySelectorAll(".delete-btn");
