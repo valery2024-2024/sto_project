@@ -21,8 +21,6 @@ def submit_contact():
     name = request.form.get("name")
     phone = request.form.get("phone")
     message = request.form.get("message")
-    # Діагностика: Перевіряємо, чи отримані дані з форми
-    print(f"Отримані дані: ім'я={name}, телефон={phone}, повідомлення={message}")
 
     if not name or not phone or not message:
         flash("Всі поля обов’язкові для заповнення!", "error")
