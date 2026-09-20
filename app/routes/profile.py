@@ -34,18 +34,3 @@ def api_profile():
             } for car in user.cars
         ]
     })
-
-
-@profile_bp.route("/profile", methods=["GET"])
-@jwt_required()
-def profile():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if user:
-        return jsonify({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email
-        })
-    return jsonify({"msg": "Користувача не знайдено"}), 404
