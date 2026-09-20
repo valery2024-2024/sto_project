@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, session, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, session, url_for
 
 from app.extensions import db
 from app.models import Booking, ContactMessage, User
@@ -39,30 +39,6 @@ def admin_users():
 
     users = User.query.all()
     return render_template('admin_users.html', users=users)
-
-
-@admin_bp.route("/api/admin/users", methods=["GET"])
-def api_admin_users():
-    if not get_current_admin():
-        return jsonify({"error": "Unauthorized"}), 403
-
-    users = User.query.all()
-    return jsonify([{"id": user.id, "name": user.name, "email": user.email, "is_admin": user.is_admin} for user in users])
-
-
-@admin_bp.route("/admin/users/<int:user_id>", methods=["DELETE"])
-def api_delete_user(user_id):
-    if not get_current_admin():
-        return jsonify({"error": "Unauthorized"}), 403
-
-    user = User.query.get_or_404(user_id)
-
-    if user.id == session['user_id']:
-        return jsonify({"error": "Cannot delete yourself"}), 400
-
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({"message": "User deleted"})
 
 
 @admin_bp.route("/admin/users/delete/<int:user_id>", methods=["POST"])
