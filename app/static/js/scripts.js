@@ -159,28 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
    // })
     //.catch(err => console.error("❌ Помилка запиту на вхід:", err));
     
-    // Використання токена при доступі до захищених маршрутів
-    fetch('/profile', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-    })
-    .then(response => {
-        console.log("🔧 Статус відповіді:", response.status);
-        response.json();
-    })
-    .then(data => {
-        console.log("🔧 Відповідь сервера (профіль):", data);
-        if (data.id) {
-            alert(`Ласкаво просимо, ${data.name}!`);
-        } else {
-            alert('Помилка доступу!');
-        }
-    })
-    .catch(err => console.error("❌ Помилка отримання профілю:", err));
-    
-
     // Видалення запису
     setTimeout(() => {
         const deleteButtons = document.querySelectorAll(".delete-btn");
