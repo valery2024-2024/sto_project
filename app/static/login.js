@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok && data.access_token) {
                     localStorage.setItem("access_token", data.access_token);
-                    window.location.href = "/profile";
+                    window.location.href = "/profile_with_cars";
                 } else {
                     alert(data.msg || "Невірні дані!");
                 }
