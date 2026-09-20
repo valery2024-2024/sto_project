@@ -107,6 +107,11 @@ def change_password():
         return redirect(url_for('auth.login'))
 
     user = User.query.get(session['user_id'])
+    if not user:
+        session.pop('user_id', None)
+        session.pop('user_name', None)
+        flash('Будь ласка, увійдіть у систему!', 'danger')
+        return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         current_password = request.form['current_password']
