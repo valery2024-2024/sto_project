@@ -17,6 +17,8 @@ def profile_with_cars():
 def api_profile():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "Користувача не знайдено"}), 404
 
     return jsonify({
         "name": user.name,
