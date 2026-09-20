@@ -42,8 +42,14 @@ def register():
 
         is_first_user = User.query.count() == 0
         new_user = User(name=name, email=email, password=hashed_password, is_admin=is_first_user)
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except Exception:
+            current_app.logger.exception("Помилка реєстрації користувача")
+            db.session.rollback()
+            flash('Не вдалося зареєструвати користувача. Спробуйте ще раз.', 'danger')
+            return redirect(url_for('auth.register'))
         flash('Реєстрація успішна! Тепер увійдіть', 'success')
         return redirect(url_for('auth.login'))
     return render_template('register.html')
