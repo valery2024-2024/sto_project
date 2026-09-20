@@ -12,6 +12,7 @@ from flask_mail import Message as MailMessage
 
 from app.extensions import db, mail
 from app.models import ContactMessage, Message
+from app.routes.admin import get_current_admin
 
 
 contact_bp = Blueprint("contact", __name__)
@@ -80,12 +81,20 @@ def submit_contact():
 
 @contact_bp.route("/admin/contacts")
 def admin_contacts():
+    if not get_current_admin():
+        flash("❌ У вас немає доступу!", "danger")
+        return redirect(url_for("main.home"))
+
     contacts = ContactMessage.query.all()
     return render_template('admin_contacts.html', contacts=contacts)
 
 
 @contact_bp.route("/admin/contacts/delete/<int:contact_id>", methods=["POST"])
 def delete_contact(contact_id):
+    if not get_current_admin():
+        flash("❌ У вас немає доступу!", "danger")
+        return redirect(url_for("main.home"))
+
     contact = ContactMessage.query.get_or_404(contact_id)
     db.session.delete(contact)
     db.session.commit()
