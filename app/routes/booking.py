@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    current_app,
     flash,
     jsonify,
     redirect,
@@ -87,7 +88,13 @@ def booking():
 @booking_bp.route("/delete_booking/<int:booking_id>", methods=["POST"])
 def delete_booking(booking_id):
     booking = Booking.query.get_or_404(booking_id)
-    db.session.delete(booking)
-    db.session.commit()
+    try:
+        db.session.delete(booking)
+        db.session.commit()
+    except Exception:
+        current_app.logger.exception("Помилка видалення запису")
+        db.session.rollback()
+        flash("Не вдалося видалити запис. Спробуйте ще раз.", "danger")
+        return redirect(url_for('admin.admin'))
     flash("Запис успішно видалено!", "success")
     return redirect(url_for('admin.admin'))
