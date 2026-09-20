@@ -41,7 +41,6 @@ from app.models import (
     Car,
     Client,
     ContactMessage,
-    Message,
     User,
 )
 # target_metadata = mymodel.Base.metadata
