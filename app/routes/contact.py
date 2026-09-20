@@ -31,7 +31,6 @@ def submit_contact():
         new_message = ContactMessage(name=name, phone=phone, message=message)
         db.session.add(new_message)
         db.session.commit()
-        print("Запис успішно збережено в базу даних!")
     except Exception:
         current_app.logger.exception("Помилка збереження заявки")
         db.session.rollback()
@@ -75,7 +74,6 @@ def send_email(name, phone, message):
                         recipients=[current_app.config['MAIL_USERNAME']])
         msg.body = f"Ім'я: {name}\nТелефон: {phone}\nПовідомлення: {message}"
         mail.send(msg)
-        print("Email успішно відправлено!")
         return True
     except Exception:
         current_app.logger.exception("Помилка при відправці email")
