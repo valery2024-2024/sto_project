@@ -38,7 +38,6 @@ def admin_users():
         return redirect(url_for('main.home'))
 
     users = User.query.all()
-    print(users) # Виведе список у терміналі
     return render_template('admin_users.html', users=users)
 
 
