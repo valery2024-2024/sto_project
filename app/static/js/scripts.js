@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 🔹 Слайдер відгуків
 let currentReview = 0;
 const reviews = document.querySelectorAll('.review-slide');
+const prevButton = document.querySelector('.review-prev');
+const nextButton = document.querySelector('.review-next');
 
 function showReview(index) {
     reviews.forEach((review, i) => {
@@ -54,5 +56,15 @@ function prevReview() {
 }
 
 // Автоматичне переключення кожні 5 секунд
-setInterval(nextReview, 5000);
+if (reviews.length > 0) {
+    if (prevButton) {
+        prevButton.addEventListener("click", prevReview);
+    }
+
+    if (nextButton) {
+        nextButton.addEventListener("click", nextReview);
+    }
+
+    setInterval(nextReview, 5000);
+}
 });
