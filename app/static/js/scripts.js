@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("JavaScript підключено і працює!");
-
     // Випадаюче меню
     const dropdownButton = document.querySelector('.dropdown-button');
     const dropdownMenu = document.querySelector('.dropdown-menu');
@@ -9,17 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownButton.addEventListener('click', (e) => {
             e.preventDefault();
             dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-            console.log("Меню відкрито!");
         });
 
         document.addEventListener('click', (e) => {
             if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.style.display = 'none';
-                console.log("Меню закрито!");
             }
         });
-    } else {
-        console.log("Dropdown elements not found!");
     }
     // Видалення запису
     document.querySelectorAll(".delete-btn").forEach(button => {
