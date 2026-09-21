@@ -21,47 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log("Dropdown elements not found!");
     }
-    document.addEventListener("DOMContentLoaded", async function loadProfile() {
-        let token = localStorage.getItem("access_token");//Отримуємо токен
-    
-        if (!token) {
-            console.log("❌ Токен відсутній! Перенаправлення на вхід.");
-            window.location.href = "/login"; // Якщо токена немає — перенаправляємо на логін
-            return;
-        }
-        
-        console.log("🔧 Токен у заголовку:", "Bearer " + token);
-
-        try {
-            //document.cookie = `access_token_cookie=${token}; path=/;`;
-            let response = await fetch("/api/profile", {
-                method: "GET",
-                headers: {
-                    "Authorization": "Bearer " + token,  // ✅ Передаємо токен у заголовку
-                    "Content-Type": "application/json",
-                },
-                credentials: "include"  // Додаємо для передачі кукісів
-            });
-        
-    
-            let data = await response.json();
-            console.log("📝 Відповідь сервера:", data);
-    
-            if (response.ok) {
-                document.getElementById("user-name").innerText = data.name;
-                document.getElementById("user-email").innerText = data.email;
-                console.log("✅ Профіль завантажено успішно!");
-                //document.getElementById("profile-info").innerText = `Привіт, ${data.name}!`;
-            } else {
-                console.error("❌ Помилка доступу: " + data.msg);
-                //alert("Помилка доступу до профілю: " + data.msg);
-                window.location.href = "/login"; // Якщо помилка — повертаємо на сторінку входу
-            }
-        } catch (error) {
-            console.error("❌ Помилка отримання профілю:", error);
-        }
-    });
-
     // Видалення запису
     document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function(event) {
