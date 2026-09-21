@@ -11,6 +11,7 @@ from flask import (
 
 from app.extensions import db
 from app.models import Appointment, Booking, Client
+from app.routes.admin import get_current_admin
 
 
 booking_bp = Blueprint("booking", __name__)
@@ -87,6 +88,10 @@ def booking():
 
 @booking_bp.route("/delete_booking/<int:booking_id>", methods=["POST"])
 def delete_booking(booking_id):
+    if not get_current_admin():
+        flash('❌ У вас немає доступу!', 'danger')
+        return redirect(url_for('main.home'))
+
     booking = Booking.query.get_or_404(booking_id)
     try:
         db.session.delete(booking)
