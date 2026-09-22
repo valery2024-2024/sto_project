@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from app.models import (
     User,
 )
@@ -66,6 +66,11 @@ def load_user(user_id):
 #----------------------Запис Авто------------------------------
 # Сторінка запису на ремонт
 # -------------------- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ --------------------
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html"), 404
+
 
 # -------------------- ЗАПУСК СЕРВЕРА --------------------
 @app.after_request
