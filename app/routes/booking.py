@@ -2,7 +2,6 @@ from flask import (
     Blueprint,
     current_app,
     flash,
-    jsonify,
     redirect,
     render_template,
     request,
@@ -10,46 +9,11 @@ from flask import (
 )
 
 from app.extensions import db
-from app.models import Appointment, Booking, Client
+from app.models import Booking
 from app.routes.admin import get_current_admin
 
 
 booking_bp = Blueprint("booking", __name__)
-
-
-@booking_bp.route("/api/add_appointment", methods=["POST"])
-def add_appointment():
-    data = request.json
-    client = Client(name=data['name'], phone=data['phone'], email=data.get('email'))
-    db.session.add(client)
-    db.session.commit()
-
-    appointment = Appointment(
-        client_id=client.id,
-        date=data['date'],
-        time=data['time'],
-        service=data['service'],
-        comment=data.get('comment', '')
-    )
-    db.session.add(appointment)
-    db.session.commit()
-    return jsonify({'message': 'Запис успішно додано'}), 201
-
-
-@booking_bp.route("/api/bookings", methods=["GET"])
-def get_bookings():
-    bookings = Appointment.query.all()
-    result = []
-    for b in bookings:
-        client = Client.query.get(b.client_id)
-        result.append({
-            'name': client.name,
-            'phone': client.phone,
-            'date': b.date,
-            'time': b.time,
-            'service': b.service
-        })
-    return jsonify(result)
 
 
 @booking_bp.route("/booking/update/<int:booking_id>", methods=["GET", "POST"])
