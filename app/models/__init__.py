@@ -1,20 +1,5 @@
 from app.extensions import db
 
-class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    phone = db.Column(db.String(20))
-    email = db.Column(db.String(100))
-    appointments = db.relationship('Appointment', backref='client', lazy=True)
-
-class Appointment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
-    date = db.Column(db.String(20))
-    time = db.Column(db.String(20))
-    service = db.Column(db.String(100))
-    comment = db.Column(db.Text)
-
 class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)

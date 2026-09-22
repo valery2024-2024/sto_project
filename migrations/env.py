@@ -36,10 +36,8 @@ def get_engine_url():
 # for 'autogenerate' support
 # from myapp import mymodel
 from app.models import (
-    Appointment,
     Booking,
     Car,
-    Client,
     ContactMessage,
     User,
 )
