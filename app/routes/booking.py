@@ -18,6 +18,10 @@ booking_bp = Blueprint("booking", __name__)
 
 @booking_bp.route("/booking/update/<int:booking_id>", methods=["GET", "POST"])
 def update_booking(booking_id):
+    if not get_current_admin():
+        flash('вќЊ РЈ РІР°СЃ РЅРµРјР°С” РґРѕСЃС‚СѓРїСѓ!', 'danger')
+        return redirect(url_for('main.home'))
+
     booking = Booking.query.get_or_404(booking_id)
     if request.method == 'POST':
         booking.name = request.form['name']
@@ -26,7 +30,13 @@ def update_booking(booking_id):
         booking.comment = request.form['comment']
         booking.email = request.form['email']
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception:
+            current_app.logger.exception("РџРѕРјРёР»РєР° РѕРЅРѕРІР»РµРЅРЅСЏ Р·Р°РїРёСЃСѓ")
+            db.session.rollback()
+            flash("РќРµ РІРґР°Р»РѕСЃСЏ РѕРЅРѕРІРёС‚Рё Р·Р°РїРёСЃ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.", "danger")
+            return redirect(url_for('admin.admin'))
         flash("Запис успішно оновлено!", "success")
         return redirect(url_for('admin.admin'))
 
