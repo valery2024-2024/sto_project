@@ -12,7 +12,9 @@ cars_bp = Blueprint("cars", __name__)
 @jwt_required()
 def api_add_car():
     user_id = get_jwt_identity()
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"msg": "Invalid or missing JSON"}), 400
 
     try:
         new_car = Car(
