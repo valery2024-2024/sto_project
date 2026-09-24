@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.extensions import db
@@ -32,19 +32,22 @@ def api_add_car():
     except (TypeError, ValueError):
         return jsonify({"msg": "Invalid numeric fields"}), 400
 
+    new_car = Car(
+        name=name,
+        engine=engine,
+        fuel_consumption=fuel_consumption,
+        register=data.get('register', False),
+        user_id=user_id
+    )
+
     try:
-        new_car = Car(
-            name=name,
-            engine=engine,
-            fuel_consumption=fuel_consumption,
-            register=data.get('register', False),
-            user_id=user_id
-        )
         db.session.add(new_car)
         db.session.commit()
         return jsonify({"msg": "РђРІС‚РѕРјРѕР±С–Р»СЊ РґРѕРґР°РЅРѕ СѓСЃРїС–С€РЅРѕ!"}), 201
-    except Exception as e:
-        return jsonify({"msg": f"РџРѕРјРёР»РєР°: {str(e)}"}), 400
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Failed to add car")
+        return jsonify({"msg": "Failed to add car"}), 500
 
 
 @cars_bp.route("/add_car", methods=["GET"])
