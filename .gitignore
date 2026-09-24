@@ -67,6 +67,7 @@ migrations/versions/__pycache__/
 # ==============================
 _backup/
 backup/
+backups/
 
 # ==============================
 # Системні файли Windows
