@@ -16,11 +16,27 @@ def api_add_car():
     if not isinstance(data, dict):
         return jsonify({"msg": "Invalid or missing JSON"}), 400
 
+    required_fields = ("name", "engine", "fuel_consumption")
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return jsonify({"msg": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+
+    name = data["name"]
+    if not isinstance(name, str) or not name.strip():
+        return jsonify({"msg": "Invalid name"}), 400
+    name = name.strip()
+
+    try:
+        engine = int(data["engine"])
+        fuel_consumption = float(data["fuel_consumption"])
+    except (TypeError, ValueError):
+        return jsonify({"msg": "Invalid numeric fields"}), 400
+
     try:
         new_car = Car(
-            name=data['name'],
-            engine=int(data['engine']),
-            fuel_consumption=float(data['fuel_consumption']),
+            name=name,
+            engine=engine,
+            fuel_consumption=fuel_consumption,
             register=data.get('register', False),
             user_id=user_id
         )
