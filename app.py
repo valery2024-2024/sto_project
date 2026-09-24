@@ -54,10 +54,6 @@ app.register_blueprint(contact_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(profile_bp)
 
-# Створення таблиць у БД
-with app.app_context():
-    db.create_all()
-
 # Де User — моя модель користувача
 @login_manager.user_loader
 def load_user(user_id):
