@@ -8,7 +8,7 @@ from app.models import Car
 cars_bp = Blueprint("cars", __name__)
 
 
-@cars_bp.route("/api/add_car", methods=["GET", "POST"])
+@cars_bp.route("/api/add_car", methods=["POST"])
 @jwt_required()
 def api_add_car():
     user_id = get_jwt_identity()
