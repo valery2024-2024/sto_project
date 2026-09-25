@@ -10,7 +10,7 @@ from flask import (
 
 from app.extensions import db
 from app.models import Booking
-from app.routes.admin import get_current_admin
+from app.utils.auth import get_current_admin
 
 
 booking_bp = Blueprint("booking", __name__)

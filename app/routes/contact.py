@@ -10,7 +10,7 @@ from flask_mail import Message as MailMessage
 
 from app.extensions import db, mail
 from app.models import ContactMessage
-from app.routes.admin import get_current_admin
+from app.utils.auth import get_current_admin
 
 
 contact_bp = Blueprint("contact", __name__)

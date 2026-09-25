@@ -2,21 +2,10 @@ from flask import Blueprint, current_app, flash, redirect, render_template, sess
 
 from app.extensions import db
 from app.models import Booking, ContactMessage, User
+from app.utils.auth import get_current_admin
 
 
 admin_bp = Blueprint("admin", __name__)
-
-
-def get_current_admin():
-    if 'user_id' not in session:
-        return None
-
-    user = User.query.get(session['user_id'])
-
-    if not user or not user.is_admin:
-        return None
-
-    return user
 
 
 @admin_bp.route("/admin")
