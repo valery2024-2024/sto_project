@@ -34,7 +34,7 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD", "your_app_password")
     app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
 
-    app.config['JWT_SECRET_KEY'] = 'super-secret'
+    app.config['JWT_SECRET_KEY'] = os.environ["JWT_SECRET_KEY"]
     app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
     app.config['JWT_HEADER_NAME'] = 'Authorization'
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
