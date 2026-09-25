@@ -25,7 +25,7 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
+    app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
 
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
