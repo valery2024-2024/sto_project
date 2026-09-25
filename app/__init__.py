@@ -2,10 +2,13 @@ import logging
 import os
 
 from flask import Flask, render_template
+from dotenv import load_dotenv
 
 from app.extensions import cors, db, jwt, login_manager, mail, migrate
 from app.models import User
 
+
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 PACKAGE_DIR = os.path.abspath(os.path.dirname(__file__))
