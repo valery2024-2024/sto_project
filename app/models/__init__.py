@@ -1,0 +1,34 @@
+from app.extensions import db
+
+class Car(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    engine = db.Column(db.Integer, nullable=False)
+    fuel_consumption = db.Column(db.Float, nullable=False)
+    register = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_car_user_id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('cars', lazy=True))
+
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    date = db.Column(db.String(20), nullable=False)
+    comment = db.Column(db.Text, nullable=True)
+    email = db.Column(db.String(120), nullable=False)
+
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False) 
+
+    def __str__(self):
+        return f"User(id={self.id}, name={self.name}, email={self.email})"
