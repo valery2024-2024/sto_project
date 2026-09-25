@@ -53,8 +53,14 @@ def booking():
             comment=request.form.get('comment', ''),
             email=request.form['email']
         )
-        db.session.add(new_booking)
-        db.session.commit()
+        try:
+            db.session.add(new_booking)
+            db.session.commit()
+        except Exception:
+            current_app.logger.exception("Помилка створення запису")
+            db.session.rollback()
+            flash("Не вдалося створити запис. Спробуйте ще раз.", "error")
+            return redirect(url_for('booking.booking'))
         flash("Запис успішно створено!", "success")
         return redirect(url_for('booking.booking'))
     return render_template('booking.html')
