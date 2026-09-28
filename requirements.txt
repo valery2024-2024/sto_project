@@ -7,3 +7,4 @@ Flask-CORS
 Flask-Login
 Werkzeug
 python-dotenv
+pytest
