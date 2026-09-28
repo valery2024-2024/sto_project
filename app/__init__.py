@@ -16,7 +16,7 @@ BASE_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, os.pardir))
 DB_PATH = os.path.join(BASE_DIR, "instance", "sto.db")
 
 
-def create_app():
+def create_app(config_overrides=None):
     app = Flask(
         __name__,
         template_folder="templates",
@@ -41,6 +41,9 @@ def create_app():
     app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token_cookie'
     app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+
+    if config_overrides:
+        app.config.update(config_overrides)
 
     db.init_app(app)
     migrate.init_app(app, db)
