@@ -31,7 +31,7 @@ def app():
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": test_db_uri,
         "SECRET_KEY": "test-secret",
-        "JWT_SECRET_KEY": "test-jwt-secret",
+        "JWT_SECRET_KEY": "test-jwt-secret-for-pytest-only-key",
         "MAIL_SUPPRESS_SEND": True,
     })
 
